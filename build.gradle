@@ -154,10 +154,9 @@ allprojects {
 
 
 subprojects {
-    def u = isNotNullOrBlank(System.getenv("PUB_USER"))
-            ? System.getenv("PUB_USER") : System.properties.getProperty("mu")
-    def p =isNotNullOrBlank(System.getenv("PUB_PWD"))
-            ? System.getenv("PUB_PWD") : System.properties.getProperty("mp")
+    def u = (System.getenv("PUB_USER") ?: project.property("PUB_USER")) ?: System.properties.getProperty("u")
+    def p =(System.getenv("PUB_PWD") ?: project.property("PUB_PWD")) ?: System.properties.getProperty("p")
+    def s = (System.getenv("PUB_URL") ?: project.property("PUB_URL")) ?: System.properties.getProperty("s")
 
     if(!project.name.startsWith("dummy")) {
         publishing {
@@ -212,7 +211,7 @@ subprojects {
                 if (isNotNullOrBlank(u) && isNotNullOrBlank(p)) {
                     maven {
                         name = "OSSRH"
-                        url = System.getenv("MAVEN_URL") != null ? System.getenv("MAVEN_URL") : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+                        url = s ?: "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
                         credentials {
                             username = u
                             password = p
