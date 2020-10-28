@@ -2,7 +2,6 @@ package com.labijie.infra.sink.elastic
 
 import com.labijie.infra.commons.sink.sink.ISinkStore
 import com.labijie.infra.commons.sink.sink.SinkBase
-import com.labijie.infra.commons.sink.sink.SinkConfiguration
 import com.labijie.infra.sink.elastic.conf.ElasticSearchConfig
 import com.labijie.infra.sink.elastic.elasticsearch.ElasticSearchFactory
 import com.labijie.infra.sink.elastic.elasticsearch.ElasticSearchKey
@@ -18,7 +17,7 @@ import java.util.*
  * @date 18-8-14
  * @since JDK1.8
  */
-abstract class ElasticSearchSink<T, V> : _root_ide_package_.com.labijie.infra.commons.sink.sink.SinkBase<T, V> {
+abstract class ElasticSearchSink<T, V> : SinkBase<T, V> {
 
   private val elasticConf: ElasticSearchConfig
   private val elasticKey: ElasticSearchKey
@@ -51,7 +50,7 @@ abstract class ElasticSearchSink<T, V> : _root_ide_package_.com.labijie.infra.co
     }
   }
 
-  override fun createStore(): _root_ide_package_.com.labijie.infra.commons.sink.sink.ISinkStore<V> {
+  override fun createStore(): ISinkStore<V> {
     return createElasticStore(this.elasticPool, this.elasticConf)
   }
 

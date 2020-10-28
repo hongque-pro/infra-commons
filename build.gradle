@@ -59,6 +59,8 @@ buildscript {
 group = 'com.labijie.infra'
 version = global_version
 
+
+
 def static Boolean  isNotNullOrBlank(String s){
     return !(s == null || s.trim().length() == 0)
 }
@@ -74,9 +76,13 @@ allprojects {
     apply plugin: 'signing'
     apply plugin: 'kotlin-spring'
     apply plugin: 'java-library'
-    apply plugin: 'maven-publish'
+    if(!project.name.startsWith("dummy")) {
+        apply plugin: 'maven-publish'
+    }
     apply plugin: 'io.spring.dependency-management'
 
+    compileJava.options.encoding = "UTF-8"
+    javadoc.options.encoding = "UTF-8"
 
     group=project.rootProject.group
     version= global_version
@@ -96,14 +102,11 @@ allprojects {
         }
     }
 
-    tasks.withType(JavaCompile){
-        options.encoding = "utf-8"
-    }
-
     java {
-        withJavadocJar()
+        //withJavadocJar()
         withSourcesJar()
     }
+
 
     repositories {
         mavenLocal()
@@ -112,13 +115,6 @@ allprojects {
         }
         mavenCentral()
         maven { url "https://repo.spring.io/plugins-release" }
-    }
-
-    compileTestKotlin {
-        kotlinOptions {
-            freeCompilerArgs = ["-Xjsr305=strict"]
-            jvmTarget = "1.8"
-        }
     }
 
     dependencyManagement {
@@ -163,62 +159,64 @@ subprojects {
     def p =isNotNullOrBlank(System.getenv("PUB_PWD"))
             ? System.getenv("PUB_PWD") : System.properties.getProperty("mp")
 
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                artifactId = project.name == "core" ? "commons" : "commons-" + project.name
-                from components.java
-                pom {
-                    name = project.name
-                    description = 'infrastructure library'
-                    url = 'https://github.com/hongque-pro/infra-commons'
+    if(!project.name.startsWith("dummy")) {
+        publishing {
+            publications {
+                mavenJava(MavenPublication) {
+                    artifactId = project.name == "core" ? "commons" : "commons-" + project.name
+                    from components.java
+                    pom {
+                        name = project.name
+                        description = 'infrastructure library'
+                        url = 'https://github.com/hongque-pro/infra-commons'
 //                    properties = [
 //                            myProp: "value",
 //                            "prop.with.dots": "anotherValue"
 //                    ]
-                    licenses {
-                        license {
-                            name = 'The Apache License, Version 2.0'
-                            url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                        licenses {
+                            license {
+                                name = 'The Apache License, Version 2.0'
+                                url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                            }
                         }
-                    }
-                    developers {
-                        developer {
-                            id = 'labijie.com'
-                            name = 'infra team'
-                            email = 'tech@labijie.com'
+                        developers {
+                            developer {
+                                id = 'labijie.com'
+                                name = 'infra team'
+                                email = 'tech@labijie.com'
+                            }
                         }
-                    }
-                    scm {
-                        url = 'https://github.com/hongque-pro/infra-commons'
-                        connection = 'scm:git@github.com:endink/caching-kotlin.git'
-                        developerConnection = 'git@github.com:endink/caching-kotlin.git'
+                        scm {
+                            url = 'https://github.com/hongque-pro/infra-commons'
+                            connection = 'scm:git@github.com:hongque-pro/infra-commons.git'
+                            developerConnection = 'git@github.com:hongque-pro/infra-commons.git'
+                        }
                     }
                 }
             }
-        }
 
-        signing {
-            if (canBeSign(project)) {
-                def signingKey = System.getenv('GPG_KEY')
-                def password = System.getenv('GPG_PWD')
-                if(isNotNullOrBlank(signingKey) && isNotNullOrBlank(password)) {
-                    useInMemoryPgpKeys(signingKey, password)
+            signing {
+                if (canBeSign(project)) {
+                    def signingKey = System.getenv('GPG_KEY')
+                    def password = System.getenv('GPG_PWD')
+                    if (isNotNullOrBlank(signingKey) && isNotNullOrBlank(password)) {
+                        useInMemoryPgpKeys(signingKey, password)
+                    }
+                    sign publishing.publications.mavenJava
+                } else {
+                    println "Signing information missing/incomplete for ${project.name}"
                 }
-                sign publishing.publications.mavenJava
-            } else {
-                println "Signing information missing/incomplete for ${project.name}"
             }
-        }
 
-        repositories {
-            if (isNotNullOrBlank(u) && isNotNullOrBlank(p)) {
-                maven {
-                    name = "OSSRH"
-                    url = System.getenv("MAVEN_URL") != null ? System.getenv("MAVEN_URL") : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-                    credentials {
-                        username = u
-                        password = p
+            repositories {
+                if (isNotNullOrBlank(u) && isNotNullOrBlank(p)) {
+                    maven {
+                        name = "OSSRH"
+                        url = System.getenv("MAVEN_URL") != null ? System.getenv("MAVEN_URL") : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+                        credentials {
+                            username = u
+                            password = p
+                        }
                     }
                 }
             }

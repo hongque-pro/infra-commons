@@ -1,0 +1,4 @@
+dependencies {
+    compile project(":distribution-starter")
+    compile "org.springframework.boot:spring-boot-starter-web:$spring_boot_version"
+}

@@ -10,7 +10,7 @@ import java.net.URL
 import java.util.*
 
 
-abstract class ElasticSearchSink<T, V>(properties: Properties, private val elasticConf: ElasticSearchConfig) : _root_ide_package_.com.labijie.infra.commons.sink.sink.SinkBase<T, V>(properties) {
+abstract class ElasticSearchSink<T, V>(properties: Properties, private val elasticConf: ElasticSearchConfig) : SinkBase<T, V>(properties) {
     private val client: RestHighLevelClient
 
     init {
@@ -24,7 +24,7 @@ abstract class ElasticSearchSink<T, V>(properties: Properties, private val elast
     }
 
 
-    override fun createStore(): _root_ide_package_.com.labijie.infra.commons.sink.sink.ISinkStore<V> {
+    override fun createStore(): ISinkStore<V> {
         return createElasticStore(this.client, this.elasticConf)
     }
 

@@ -1,0 +1,12 @@
+dependencies {
+    compile project(":core-starter")
+    compile "org.springframework.boot:spring-boot-starter-aop:$spring_boot_version"
+
+    compile("org.apache.curator:curator-recipes:$curator_version") {
+        exclude group: 'org.apache.zookeeper', module: 'zookeeper'
+    }
+    compile ("org.apache.zookeeper:zookeeper:$zk_version"){
+        exclude module: "slf4j-log4j12"
+        exclude module: "log4j"
+    }
+}

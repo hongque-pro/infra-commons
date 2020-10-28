@@ -1,0 +1,16 @@
+dependencies{
+    compile project(":core-starter")
+    compile ("org.mybatis.spring.boot:mybatis-spring-boot-starter:$mybatis_starter_version"){
+        exclude module:'spring-boot-starter-jdbc'
+        exclude module:'mybatis'
+    }
+    compile ("org.springframework.boot:spring-boot-starter-jdbc:$spring_boot_version"){
+        exclude module:'jsqlparser'
+    }
+
+    compile("org.mybatis:mybatis:$mybatis_version")
+    compile "com.github.jsqlparser:jsqlparser:$jsqlparser_version"
+    compile "com.github.pagehelper:pagehelper:$mybatis_pagehelper_version"
+    compile "org.mybatis.generator:mybatis-generator-core:$mybatis_generator_version"
+
+}

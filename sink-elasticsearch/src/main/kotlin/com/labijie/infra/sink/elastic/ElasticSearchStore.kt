@@ -19,7 +19,7 @@ import java.net.InetAddress
  * @date 18-8-14
  * @since JDK1.8
  */
-abstract class ElasticSearchStore<V> : _root_ide_package_.com.labijie.infra.commons.sink.sink.ISinkStore<V> {
+abstract class ElasticSearchStore<V> : ISinkStore<V> {
 
   val elasticPool: ElasticSearchPoolManager
   val elasticConf: ElasticSearchConfig

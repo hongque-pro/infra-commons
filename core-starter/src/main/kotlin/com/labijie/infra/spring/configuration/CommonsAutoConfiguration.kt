@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration
  * @date 2018-08-12
  */
 @Configuration
-@EnableConfigurationProperties(_root_ide_package_.com.labijie.infra.spring.configuration.NetworkConfig::class)
+@EnableConfigurationProperties(NetworkConfig::class)
 class CommonsAutoConfiguration {
 
     @ConditionalOnMissingBean(IIdGenerator::class)

@@ -23,7 +23,7 @@ import org.elasticsearch.common.xcontent.XContentType
 abstract class ElasticSearchStore<V>(
         protected val client: RestHighLevelClient,
         protected val elasticConf: ElasticSearchConfig
-) : _root_ide_package_.com.labijie.infra.commons.sink.sink.ISinkStore<V> {
+) : ISinkStore<V> {
 
     protected val addType: Boolean
 

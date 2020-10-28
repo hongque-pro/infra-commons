@@ -22,13 +22,13 @@ import java.net.InetSocketAddress
  * @since JDK1.8
  */
 @Configuration
-@ConditionalOnClass(_root_ide_package_.com.labijie.infra.commons.sink.sink.SinkBase::class)
+@ConditionalOnClass(SinkBase::class)
 class ElasticJsonAutoConfiguration {
 
   @Bean
   @Primary
   @ConfigurationProperties("infra.kafka")
-  fun kafkaSettings(): _root_ide_package_.com.labijie.infra.commons.sink.conf.KafkaSettings = _root_ide_package_.com.labijie.infra.commons.sink.conf.KafkaSettings()
+  fun kafkaSettings(): KafkaSettings = KafkaSettings()
 
   @Bean
   @Primary
