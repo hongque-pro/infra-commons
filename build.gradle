@@ -35,6 +35,8 @@ buildscript {
 
         lettuce_version = '5.3.4.RELEASE'
         mockito_version = '1.10.19'
+
+        nexus_workflow_version = '0.6'
         maven_repo= System.getenv("MAVEN_PROXY")
     }
     repositories {
@@ -51,6 +53,7 @@ buildscript {
         classpath "io.spring.gradle:dependency-management-plugin:$spring_dep_mgn_version"
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
         classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
+        classpath("com.adaptc.gradle:nexus-workflow:$nexus_workflow_version")
     }
 
 }
@@ -80,6 +83,7 @@ allprojects {
         apply plugin: 'maven-publish'
     }
     apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'nexus-workflow'
 
     compileJava.options.encoding = "UTF-8"
     javadoc.options.encoding = "UTF-8"
