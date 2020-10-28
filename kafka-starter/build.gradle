@@ -1,0 +1,7 @@
+group 'com.labijie.infra'
+
+dependencies {
+  compile("org.jetbrains.kotlin:kotlin-reflect")
+  compile "org.apache.kafka:kafka-clients:$kafka_version"
+  compile "org.springframework.boot:spring-boot-starter:$spring_boot_version"
+}

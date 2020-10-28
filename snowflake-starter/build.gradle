@@ -1,0 +1,15 @@
+group 'com.labijie.infra'
+
+dependencies {
+    compile project(":core-starter")
+    compile "io.lettuce:lettuce-core:$lettuce_version"
+
+    compile("org.apache.curator:curator-framework:$curator_version") {
+        exclude group: 'org.apache.zookeeper', module: 'zookeeper'
+    }
+    compile ("org.apache.zookeeper:zookeeper:$zk_version"){
+        exclude module: "slf4j-log4j12"
+        exclude module: "log4j"
+    }
+//    compile group: 'com.coreos', name: 'jetcd-core', version: '0.0.2'
+}

@@ -1,0 +1,34 @@
+{
+  "group":[
+    {
+      "name":"infra",
+      "type": "com.labijie.infra.spring.configuration.NetworkConfig",
+      "description": "netowork maps, include application used network"
+    },
+    {
+      "name":"infra.security.rfc6238",
+      "type": "com.labijie.infra.security.Rfc6238TokenServiceProperties",
+      "sourceType": "com.labijie.infra.spring.configuration.CommonsAutoConfiguration",
+      "sourceMethod": "rfc6238TokenServiceProperties()",
+      "description": "Rfc6238 token service properties"
+    }
+  ],
+  "properties":[
+    {
+      "name":"infra.networks",
+      "type": "java.util.Map<java.lang.String,java.lang.String>",
+      "sourceType": "com.labijie.infra.spring.configuration.NetworkConfig"
+    },
+    {
+      "name":"infra.security.rfc6238.time-step",
+      "type": "java.time.Duration",
+      "sourceType": "com.labijie.infra.security.Rfc6238TokenServiceProperties",
+      "defaultValue": "3m"
+    },
+    {
+      "name":"infra.security.rfc6238.security-token",
+      "type": "java.lang.String",
+      "sourceType": "com.labijie.infra.security.Rfc6238TokenServiceProperties"
+    }
+  ]
+}

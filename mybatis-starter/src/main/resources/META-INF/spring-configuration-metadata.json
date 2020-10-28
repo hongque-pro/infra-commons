@@ -1,0 +1,64 @@
+{
+  "group":[
+    {
+      "name":"infra.mybatis.page",
+      "type": "com.labijie.infra.mybatis.configuration.MybatisPageHelperProperties",
+      "description": "mybatis page helper configuration"
+    }
+  ],
+  "properties":[
+    {
+      "name":"infra.mybatis.page.helperDialect",
+      "type": "java.lang.String",
+      "sourceType": "com.labijie.infra.mybatis.configuration.MybatisPageHelperProperties"
+    },
+    {
+      "name":"infra.mybatis.page.autoRuntimeDialect",
+      "type": "java.lang.Boolean",
+      "sourceType": "for multiple data source, auto decide db dialect"
+    }
+  ],
+  "hints": [
+    {
+      "name": "infra.mybatis.page.helperDialect",
+      "values": [
+        {
+          "value": "oracle"
+        },
+        {
+          "value": "mysql"
+        },
+        {
+          "value": "mariadb"
+        },
+        {
+          "value": "sqlite"
+        },
+        {
+          "value": "hsqldb"
+        },
+        {
+          "value": "postgresql"
+        },
+        {
+          "value": "db2"
+        },
+        {
+          "value": "sqlserver"
+        },
+        {
+          "value": "informix"
+        },
+        {
+          "value": "h2"
+        },
+        {
+          "value": "sqlserver2012"
+        },
+        {
+          "value": "derby"
+        }
+      ]
+    }
+  ]
+}

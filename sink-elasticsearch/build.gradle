@@ -1,0 +1,10 @@
+group 'com.labijie.infra'
+
+
+dependencies {
+  compile project(":sink-core")
+  compile ("org.elasticsearch.client:transport:$elasticsearch_version") {
+    exclude group: "org.elasticsearch.client", module: "elasticsearch-rest-client"
+  }
+  compile "org.apache.commons:commons-pool2:$commons_pool_version"
+}

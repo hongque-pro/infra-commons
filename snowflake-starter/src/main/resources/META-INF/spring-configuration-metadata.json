@@ -1,0 +1,88 @@
+{
+  "group":[
+    {
+      "name":"infra.snowflake",
+      "type": "com.labijie.infra.commons.snowflake.configuration.SnowflakeConfig"
+    },
+    {
+      "name":"infra.snowflake.zk",
+      "type": "com.labijie.infra.commons.snowflake.configuration.ZookeeperConfig"
+    },
+    {
+      "name":"infra.snowflake.static",
+      "type": "com.labijie.infra.commons.snowflake.configuration.StaticConfig"
+    },
+    {
+      "name":"infra.snowflake.redis",
+      "type": "com.labijie.infra.commons.snowflake.configuration.RedisConfig"
+    }
+  ],
+  "properties":[
+    {
+      "name":"infra.snowflake.scope",
+      "type": "java.lang.String",
+      "sourceType": "com.labijie.infra.commons.snowflake.configuration.SnowflakeConfig",
+      "description": "the snowflaker id group",
+      "defaultValue":""
+    },
+    {
+      "name":"infra.snowflake.provider",
+      "type": "java.lang.String",
+      "sourceType": "com.labijie.infra.commons.snowflake.configuration.SnowflakeConfig",
+      "description": "the application instance slot provider provider",
+      "defaultValue":"zookeeper"
+    },
+    {
+      "name":"infra.snowflake.zk.server",
+      "type": "java.lang.String",
+      "sourceType": "com.labijie.infra.commons.snowflake.configuration.ZookeeperConfig",
+      "description": "zookeeper server ip address"
+    },
+    {
+      "name":"infra.snowflake.zk.sessionTimeoutMs",
+      "type": "java.lang.Integer",
+      "sourceType": "com.labijie.infra.commons.snowflake.configuration.ZookeeperConfig",
+      "description": "zookeeper slot time out",
+      "defaultValue": 3600000
+    },
+
+    {
+      "name":"infra.snowflake.redis.url",
+      "type": "java.lang.String",
+      "sourceType": "com.labijie.infra.commons.snowflake.configuration.RedisConfig",
+      "description": "redis connection url",
+      "defaultValue": "redis://localhost:6379"
+    },
+    {
+      "name":"infra.snowflake.redis.sessionTimeout",
+      "type": "java.time.Duration",
+      "sourceType": "com.labijie.infra.commons.snowflake.configuration.RedisConfig",
+      "description": "redis slot timeout",
+      "defaultValue": "1h"
+    },
+
+    {
+      "name":"infra.snowflake.static.slot",
+      "type": "java.lang.Integer",
+      "sourceType": "com.labijie.infra.commons.snowflake.configuration.StaticConfig",
+      "description": "slot id, must be between 1 and 1024",
+      "defaultValue": 1
+    }
+  ],
+  "hints": [
+    {
+      "name": "infra.snowflake.provider",
+      "values": [
+        {
+          "value": "zookeeper"
+        },
+        {
+          "value": "redis"
+        },
+        {
+          "value": "static"
+        }
+      ]
+    }
+  ]
+}

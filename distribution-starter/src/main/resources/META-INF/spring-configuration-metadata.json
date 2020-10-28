@@ -1,0 +1,16 @@
+{
+  "group":[
+    {
+      "name":"infra.distribution.lock",
+      "type": "com.labijie.infra.distribution.configuration.DistributedLockConfig"
+    }
+  ],
+  "properties":[
+    {
+      "name":"infra.distribution.lock.server",
+      "type": "java.lang.String",
+      "sourceType": "com.labijie.infra.distribution.configuration.DistributedLockConfig",
+      "description": "the zookeeper server"
+    }
+  ]
+}

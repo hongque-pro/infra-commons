@@ -1,0 +1,3 @@
+org.springframework.context.ApplicationListener=\
+  com.labijie.infra.logging.listener.AppNameListener,\
+  com.labijie.infra.logging.listener.DatasourceListener

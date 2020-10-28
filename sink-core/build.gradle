@@ -1,0 +1,7 @@
+group 'com.labijie.infra'
+
+dependencies {
+  compile project(":core")
+  compile "org.apache.kafka:kafka-clients:$kafka_version"
+  compile "org.apache.commons:commons-text:$apache_commons_text_version"
+}

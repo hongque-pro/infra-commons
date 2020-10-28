@@ -1,0 +1,7 @@
+group 'com.labijie.infra'
+
+dependencies {
+  compile project(":sink-elasticsearch")
+  compile "org.springframework.boot:spring-boot-starter:$spring_boot_version"
+}
+

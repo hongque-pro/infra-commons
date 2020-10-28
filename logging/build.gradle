@@ -1,0 +1,15 @@
+
+dependencies {
+    compile "org.apache.kafka:kafka-clients:$kafka_version"
+    compile "ch.qos.logback:logback-classic:$logback_version"
+    compile "ch.qos.logback:logback-core:$logback_version"
+    compile "com.google.protobuf:protobuf-java:$protobuf_version"
+    compile project(":core")
+    testCompile "com.esotericsoftware:kryo:$kryo_version"
+
+}
+
+
+task compileProtocolBuffer(type: Exec) {
+    commandLine "protoc", "--java_out=src/main/java/", "idl/log.proto"
+}

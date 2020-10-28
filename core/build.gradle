@@ -1,0 +1,20 @@
+group 'com.labijie.infra'
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+    compile "org.slf4j:slf4j-api:$slf4j_version"
+    // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
+    compile "ch.qos.logback:logback-classic:$logback_version"
+    compile "org.slf4j:log4j-over-slf4j:$slf4j_version"
+    compile "com.fasterxml.jackson.module:jackson-module-kotlin:$jackson_version"
+    compile "io.netty:netty-common:$netty_version"
+    compileOnly "com.esotericsoftware:kryo:$kryo_version"
+    // https://mvnrepository.com/artifact/com.cronutils/cron-utils
+    compile "com.cronutils:cron-utils:$corn_utils_version"
+
+//    compile group: 'commons-validator', name: 'commons-validator', version: '1.6'
+
+    compile ("org.msgpack:jackson-dataformat-msgpack:$msgpack_version"){
+      exclude module: "slf4j-log4j12"
+    }
+}
