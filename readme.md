@@ -2,6 +2,11 @@
 
 该包没有太多的功能，主要用于固定依赖版本：
 
+## 使用举例
+```groovy
+    compile "com.labijie.infra:commons-snowflaker-starter:$infra_commons_version"
+```
+
 ## 服务器环境兼容性：
 zookeeper: 3.5.x - 3.6.0 （不兼容 3.4.x）
 kafka: 2.6.x (为了和 spring-kafka 保持一致)
@@ -19,4 +24,4 @@ kafka: 2.6.x (为了和 spring-kafka 保持一致)
 |   spring framework    |      5.2.9.RELEASE   |           |
 |   spring dpendency management    |      1.0.10.RELEASE    |           |
 
-这是一切开始的地方，所有组件的依赖项
+一切开始的地方，所有组件的依赖项.
