@@ -58,12 +58,14 @@ buildscript {
 
 apply plugin: 'io.codearte.nexus-staging'
 
-static Boolean  isNotNullOrBlank(String s){
-    return !(s == null || s.trim().length() == 0)
+static Boolean  isNotNullOrBlank(Object s){
+    return !(s == null || s.toString().trim().length() == 0)
 }
 
 static canBeSign(Project project) {
-    return project.hasProperty("signing.password") && project.hasProperty('signing.secretKeyRingFile') && project.hasProperty('signing.keyId')
+    return isNotNullOrBlank(project.findProperty("signing.password")) &&
+            isNotNullOrBlank(project.findProperty('signing.secretKeyRingFile')) &&
+            isNotNullOrBlank(project.findProperty('signing.keyId'))
 }
 
 static getPropertyOrCmdArgs(Project project, String propertyName, String cmdArgName) {
@@ -107,11 +109,15 @@ allprojects {
         }
     }
 
+
     java {
-        //withJavadocJar()
+        withJavadocJar()
         withSourcesJar()
     }
 
+    javadoc {
+        failOnError = false
+    }
 
     repositories {
         mavenLocal()
