@@ -1,14 +1,16 @@
 # This workflow will build a Java project with Gradle
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
 
-name: Gradle Build
+name: Gradle Build And Release
 env:
+  GPG_KEY_ID: ${{ secrets.MAVEN_SIGN_KEY_ID }}
   GPG_KEY: ${{ secrets.MAVEN_SIGN_KEY }}
   GPG_PWD: ${{ secrets.MAVEN_SIGN_KEY_PWD }}
   PUB_USER: ${{ secrets.MAVEN_USER_NAME }}
   PUB_PWD: ${{ secrets.MAVEN_USER_PWD }}
   MAVEN_URL: ${{ secrets.MAVEN_URL }}
 on:
+  workflow_dispatch:
   release:
     types: [published]
 
@@ -23,9 +25,16 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
+    - name: PGP Prepare
+      run: |
+        echo "Create .gpg key"
+        echo "$GPG_KEY" > ./release.asc
+        gpg --quiet --output $GITHUB_WORKSPACE/release.gpg --dearmor ./release.asc
+        sed -i -e "s,signing.keyId=,signing.keyId=$GPG_KEY_ID,g" gradle.properties
+        sed -i -e "s,signing.password=,signing.password=$GPG_PWD,g" gradle.properties
+        sed -i -e "s,signing.secretKeyRingFile=,signing.secretKeyRingFile=$GITHUB_WORKSPACE/release.gpg,g" gradle.properties
+        cat gradle.properties
     - name: Build with Gradle
       run: gradle clean build -x test
     - name: Publish to Maven Central
       run: gradle publish
-    - name: Maven Staging Release
-      run: gradle nexusStagingRelease

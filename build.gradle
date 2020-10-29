@@ -36,14 +36,12 @@ buildscript {
         lettuce_version = '5.3.4.RELEASE'
         mockito_version = '1.10.19'
 
-        nexus_workflow_version = '0.6'
-        maven_repo= System.getenv("MAVEN_PROXY")
+        maven_repo= System.getenv("MAVEN_PROXY") ?: 'http://maven.aliyun.com/nexus/content/groups/public/'
+        nexus_staging_version = '0.22.0'
     }
     repositories {
         mavenLocal()
-        if(maven_repo != null) {
-            maven { url maven_repo }
-        }
+        maven { url maven_repo }
         mavenCentral()
         maven { url 'https://repo.spring.io/plugins-snapshot' }
     }
@@ -53,25 +51,25 @@ buildscript {
         classpath "io.spring.gradle:dependency-management-plugin:$spring_dep_mgn_version"
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
         classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
-        classpath("com.adaptc.gradle:nexus-workflow:$nexus_workflow_version")
+        classpath("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:$nexus_staging_version")
     }
 
 }
 
+apply plugin: 'io.codearte.nexus-staging'
 
-group = 'com.labijie.infra'
-version = global_version
-
-
-
-def static Boolean  isNotNullOrBlank(String s){
+static Boolean  isNotNullOrBlank(String s){
     return !(s == null || s.trim().length() == 0)
 }
 
-def static canBeSign(Project project) {
-    def useGpg =  project.hasProperty('signing.keyId') &&  project.hasProperty("signing.password") && project.hasProperty('signing.secretKeyRingFile')
-    def useInMemoryGpg =   (isNotNullOrBlank(System.getenv('GPG_KEY')) && isNotNullOrBlank(System.getenv("GPG_PWD")))
-    return useGpg || useInMemoryGpg
+static canBeSign(Project project) {
+    return project.hasProperty("signing.password") && project.hasProperty('signing.secretKeyRingFile') && project.hasProperty('signing.keyId')
+}
+
+static getPropertyOrCmdArgs(Project project, String propertyName, String cmdArgName) {
+    def propertyValue = project.hasProperty(propertyName) ? project.property(propertyName).toString() : null
+    def v = (System.properties.getProperty(cmdArgName) ?: propertyValue ) ?: System.getenv(propertyName)
+    return isNotNullOrBlank(v) ? v : null
 }
 
 allprojects {
@@ -83,7 +81,10 @@ allprojects {
         apply plugin: 'maven-publish'
     }
     apply plugin: 'io.spring.dependency-management'
-    apply plugin: 'nexus-workflow'
+
+
+    group = 'com.labijie.infra'
+    version = global_version
 
     compileJava.options.encoding = "UTF-8"
     javadoc.options.encoding = "UTF-8"
@@ -114,9 +115,7 @@ allprojects {
 
     repositories {
         mavenLocal()
-        if(maven_repo != null) {
-            maven { url maven_repo }
-        }
+        maven { url maven_repo }
         mavenCentral()
         maven { url "https://repo.spring.io/plugins-release" }
     }
@@ -158,9 +157,9 @@ allprojects {
 
 
 subprojects {
-    def u = (System.getenv("PUB_USER") ?: project.property("PUB_USER")) ?: System.properties.getProperty("u")
-    def p =(System.getenv("PUB_PWD") ?: project.property("PUB_PWD")) ?: System.properties.getProperty("p")
-    def s = (System.getenv("PUB_URL") ?: project.property("PUB_URL")) ?: System.properties.getProperty("s")
+    def u = getPropertyOrCmdArgs(project, "PUB_USER", "u")
+    def p =getPropertyOrCmdArgs(project, "PUB_PWD", "p")
+    def s = getPropertyOrCmdArgs(project, "PUB_URL", "s")
 
     if(!project.name.startsWith("dummy")) {
         publishing {
@@ -184,7 +183,7 @@ subprojects {
                         }
                         developers {
                             developer {
-                                id = 'labijie.com'
+                                id = 'labijie infra team'
                                 name = 'infra team'
                                 email = 'tech@labijie.com'
                             }
@@ -200,11 +199,6 @@ subprojects {
 
             signing {
                 if (canBeSign(project)) {
-                    def signingKey = System.getenv('GPG_KEY')
-                    def password = System.getenv('GPG_PWD')
-                    if (isNotNullOrBlank(signingKey) && isNotNullOrBlank(password)) {
-                        useInMemoryPgpKeys(signingKey, password)
-                    }
                     sign publishing.publications.mavenJava
                 } else {
                     println "Signing information missing/incomplete for ${project.name}"
@@ -227,9 +221,12 @@ subprojects {
     }
 }
 
-
-
-dependencies {
-    compile("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-    compile("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+nexusStaging {
+    def u = getPropertyOrCmdArgs(project, "PUB_USER", "u")
+    def p =getPropertyOrCmdArgs(project, "PUB_PWD", "p")
+    username = u
+    password = p
+    packageGroup = "com.labijie.infra"
 }
+
+
