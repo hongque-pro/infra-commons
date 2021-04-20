@@ -11,9 +11,10 @@
     compile "com.labijie.infra:commons-snowflaker-starter:$infra_commons_version"
 ```
 
-## 服务器环境兼容性：
-zookeeper: 3.5.x - 3.6.0 （不兼容 3.4.x）
-kafka: 2.6.x (为了和 spring-kafka 保持一致)
+
+## 2.1.x 服务器环境兼容性：
+zookeeper: 3.7.0 （不兼容 3.4.x）
+kafka: 2.8.0 (该版本移除了 ZK 依赖)
 
 > spring kafka 兼容性看这里： https://spring.io/projects/spring-kafka
 
@@ -23,9 +24,9 @@ kafka: 2.6.x (为了和 spring-kafka 保持一致)
 |--------|--------|--------|
 |   kotlin    |      1.4.10    |           |
 |   jdk    |      1.8   |           |
-|   spring boot    |      2.3.4.RELEASE    |           |
-|  spring cloud    |      Hoxton.SR8    |   通过 BOM 控制版本，因为 cloud 组件版本混乱，无法统一指定  |
-|   spring framework    |      5.2.9.RELEASE   |           |
+|   spring boot    |      2.4.5    |           |
+|  spring cloud    |      2020.0.2    |   通过 BOM 控制版本，因为 cloud 组件版本混乱，无法统一指定  |
+|   spring framework    |      5.3.6   |           |
 |   spring dpendency management    |      1.0.10.RELEASE    |           |
 
 一切开始的地方，所有组件的依赖项.
