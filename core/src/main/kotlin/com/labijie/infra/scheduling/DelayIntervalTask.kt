@@ -28,12 +28,13 @@ class DelayIntervalTask private constructor(
     }
 
     override fun nextTimeoutMills(): Long {
-        return if(first){
+        val next = if(first){
             first = false
             this.delay
         }else{
             interval
         }
+        return System.currentTimeMillis() + next
     }
 
 

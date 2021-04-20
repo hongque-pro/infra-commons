@@ -8,4 +8,6 @@ package com.labijie.infra.utils
 object Constants {
     const val LocalProfile = "local"
     const val DevelopmentProfile = "dev"
+    const val ProductionProfile = "prod"
+    const val TestProfile = "test"
 }

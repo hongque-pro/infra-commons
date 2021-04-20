@@ -27,7 +27,7 @@ class ZookeeperDistributedLock(private val environment: Environment, private val
 
     companion object {
         fun throwIfInvalidName(name: String) {
-            if (name.isNullOrBlank()) {
+            if (name.isBlank()) {
                 throw IllegalArgumentException("DistributedLock name must not be null or empty string.")
             }
         }
@@ -58,7 +58,7 @@ class ZookeeperDistributedLock(private val environment: Environment, private val
     }
 
     private fun createClient(config: DistributedLockConfig): CuratorFramework {
-        if (config.server.isNullOrBlank()) {
+        if (config.server.isBlank()) {
             throw DistributionException("To use distributed lock, you must configure the zookeeper server address")
         }
 

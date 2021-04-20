@@ -26,6 +26,13 @@
       "defaultValue":""
     },
     {
+      "name":"infra.snowflake.start-timestamp",
+      "type": "java.lang.Long",
+      "sourceType": "com.labijie.infra.commons.snowflake.configuration.SnowflakeConfig",
+      "description": "start timestamp ( measured in milliseconds )",
+      "defaultValue": 1480166465631
+    },
+    {
       "name":"infra.snowflake.provider",
       "type": "java.lang.String",
       "sourceType": "com.labijie.infra.commons.snowflake.configuration.SnowflakeConfig",

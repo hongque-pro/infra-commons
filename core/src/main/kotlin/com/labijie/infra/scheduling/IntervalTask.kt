@@ -19,7 +19,7 @@ class IntervalTask private constructor(
     private val duration = duration.toMillis()
 
     override fun nextTimeoutMills(): Long {
-        return duration
+        return System.currentTimeMillis() +  duration
     }
 
     companion object {

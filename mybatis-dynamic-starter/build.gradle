@@ -1,0 +1,14 @@
+dependencies{
+    api project(":core-starter")
+    api ("org.mybatis.spring.boot:mybatis-spring-boot-starter:$mybatis_starter_version"){
+        exclude module:'spring-boot-starter-jdbc'
+        exclude module:'mybatis'
+    }
+    api ("org.springframework.boot:spring-boot-starter-jdbc:$spring_boot_version"){
+        exclude module:'jsqlparser'
+    }
+
+    api("org.mybatis:mybatis:$mybatis_version")
+    api "org.mybatis.dynamic-sql:mybatis-dynamic-sql:$mybatis_dynamic_sql_version"
+
+}

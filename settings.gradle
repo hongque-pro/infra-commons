@@ -13,4 +13,5 @@ include 'jpa'
 include 'logging-starter'
 include 'mybatis-starter'
 include 'sink-elasticsearch-rest'
+include 'mybatis-dynamic-starter'
 

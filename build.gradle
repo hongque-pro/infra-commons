@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        global_version = '2.0.1'
+        global_version = '2.1.0'
 
         kotlinVersion = '1.4.10'
 
@@ -9,31 +9,32 @@ buildscript {
         jackson_version='2.11.3'
         netty_version='4.1.52.Final'
         apache_commons_text_version = '1.9'
-        kafka_version = '2.6.0'
+        kafka_version = '2.8.0'
         curator_version= '5.1.0'
-        zk_version = '3.6.2'
-        msgpack_version='0.8.21'
-        protobuf_version='3.13.0'
-        elasticsearch_version = '7.2.0'
+        zk_version = '3.7.0'
+        msgpack_version='0.8.22'
+        protobuf_version='3.15.8'
+        elasticsearch_version = '7.12.0'
         commons_pool_version = '2.9.0'
-        corn_utils_version='9.1.1'
+        corn_utils_version='9.1.5'
 
-        spring_boot_version = '2.3.4.RELEASE'
-        spring_cloud_version='Hoxton.SR8'
-        spring_version = '5.2.9.RELEASE'
+        spring_boot_version = '2.4.5'
+        spring_cloud_version='2020.0.2'
         spring_dep_mgn_version='1.0.10.RELEASE'
 
         mybatis_starter_version='2.1.3'
         mybatis_version='3.5.6'
         mybatis_pagehelper_version='5.2.0'
-        jsqlparser_version='3.2'
+        mybatis_dynamic_sql_version='1.2.1'
         mybatis_generator_version='1.4.0'
 
-        kryo_version = '5.0.0'
+        jsqlparser_version='3.2'
+
+        kryo_version = '5.1.0'
 
         junit_verions = '5.7.0'
 
-        lettuce_version = '5.3.4.RELEASE'
+        lettuce_version = '6.1.1.RELEASE'
         mockito_version = '1.10.19'
 
         maven_repo= System.getenv("MAVEN_PROXY") ?: 'http://maven.aliyun.com/nexus/content/groups/public/'

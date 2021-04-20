@@ -1,7 +1,5 @@
 package com.labijie.infra.kryo
 
-import com.esotericsoftware.kryo.util.Pool
-
 /**
  * Created with IntelliJ IDEA.
  * @author Anders Xiao

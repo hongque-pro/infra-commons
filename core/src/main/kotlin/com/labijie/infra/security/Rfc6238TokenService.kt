@@ -56,7 +56,7 @@ class Rfc6238TokenService(private val properties: Rfc6238TokenServiceProperties 
     }
 
     private fun getCurrentTimeStepNumber(): Long {
-        return (System.currentTimeMillis() / properties.timeStep.toMillis()).toLong()
+        return (System.currentTimeMillis() / properties.timeStep.toMillis())
     }
 
 

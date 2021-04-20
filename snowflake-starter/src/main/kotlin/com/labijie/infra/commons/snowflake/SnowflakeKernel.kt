@@ -1,16 +1,22 @@
 package com.labijie.infra.commons.snowflake
 
+import kotlin.math.abs
+
 /**
  * Created with IntelliJ IDEA.
  * @author Anders Xiao
  * @date 2018-08-10
  */
-class SnowflakeKernel(nodeId: Long) {
-    private val machineId:Long
-    private val datacenterId: Long = 0
+class SnowflakeKernel(nodeId: Long,
+                      /**
+                       * 起始的时间戳
+                       */
+                      private val startTimestamp: Long = 1480166465631L) {
+    private val machineId: Long
+    private val dataCenterId: Long = 0
 
     init {
-        if(nodeId < 1 || nodeId > 1024){
+        if (nodeId < 1 || nodeId > 1024) {
             throw IllegalArgumentException("Snow flake node id must be between 1 and 1024.")
         }
         this.machineId = nodeId - 1L;
@@ -32,7 +38,7 @@ class SnowflakeKernel(nodeId: Long) {
         get() = System.currentTimeMillis()
 
     init {
-        if (datacenterId > MAX_DATACENTER_NUM || datacenterId < 0) {
+        if (dataCenterId > MAX_DATACENTER_NUM || dataCenterId < 0) {
             Long.MAX_VALUE
             throw IllegalArgumentException("datacenterId can't be greater than $MAX_DATACENTER_NUM or less than 0")
         }
@@ -50,7 +56,13 @@ class SnowflakeKernel(nodeId: Long) {
     fun nextId(): Long {
         var currStmp = newstmp
         if (currStmp < lastStmp) {
-            throw RuntimeException("Clock moved backwards.  Refusing to generate id")
+            val dist = abs(currStmp - lastStmp)
+            if (dist > 5000) {
+                throw RuntimeException("Clock moved backwards over 5 seconds.  Refusing to generate id")
+            }else{
+                Thread.sleep(dist + 1)
+                return nextId()
+            }
         }
 
         if (currStmp == lastStmp) {
@@ -67,8 +79,8 @@ class SnowflakeKernel(nodeId: Long) {
 
         lastStmp = currStmp
 
-        return (currStmp - START_STMP shl TIMESTMP_LEFT //时间戳部分
-                or (datacenterId shl DATACENTER_LEFT      //数据中心部分
+        return (currStmp - startTimestamp shl TIMESTMP_LEFT //时间戳部分
+                or (dataCenterId shl DATACENTER_LEFT      //数据中心部分
                 )
                 or (machineId shl MACHINE_LEFT            //机器标识部分
                 )
@@ -77,10 +89,6 @@ class SnowflakeKernel(nodeId: Long) {
 
     companion object {
 
-        /**
-         * 起始的时间戳
-         */
-        private const val START_STMP = 1480166465631L
 
         /**
          * 每一部分占用的位数
