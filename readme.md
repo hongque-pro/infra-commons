@@ -13,7 +13,7 @@
 
 
 ## 2.1.x 服务器环境兼容性：
-zookeeper: 3.7.0 （不兼容 3.4.x）
+zookeeper: 3.6.3 
 kafka: 2.8.0 (该版本移除了 ZK 依赖)
 
 > spring kafka 兼容性看这里： https://spring.io/projects/spring-kafka
