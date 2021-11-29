@@ -20,7 +20,7 @@ import org.springframework.core.env.Environment
  */
 @EnableAspectJAutoProxy
 @AutoConfigureAfter(Environment::class)
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(DistributedLockConfig::class)
 class DistributionAutoConfiguration {
 

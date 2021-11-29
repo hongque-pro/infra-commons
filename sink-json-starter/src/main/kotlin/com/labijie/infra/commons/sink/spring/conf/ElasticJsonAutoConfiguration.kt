@@ -21,7 +21,7 @@ import java.net.InetSocketAddress
  * @date 18-8-16
  * @since JDK1.8
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(SinkBase::class)
 class ElasticJsonAutoConfiguration {
 

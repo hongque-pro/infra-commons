@@ -21,7 +21,7 @@ import javax.sql.DataSource
  * @author Anders Xiao
  * @date 2018-12-27
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @AutoConfigureBefore(MybatisAutoConfiguration::class)
 @EnableConfigurationProperties(MybatisPageHelperProperties::class)
 class InfraMybatisAutoConfiguration {

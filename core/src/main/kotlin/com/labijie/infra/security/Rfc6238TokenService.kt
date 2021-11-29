@@ -1,6 +1,7 @@
 package com.labijie.infra.security
 
 import java.nio.ByteBuffer
+import java.time.Duration
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
@@ -55,21 +56,22 @@ class Rfc6238TokenService(private val properties: Rfc6238TokenServiceProperties 
         return combined.array()
     }
 
-    private fun getCurrentTimeStepNumber(): Long {
-        return (System.currentTimeMillis() / properties.timeStep.toMillis())
+    private fun getCurrentTimeStepNumber(timeStep: Duration? = null): Long {
+        val step = timeStep ?: properties.timeStep
+        return (System.currentTimeMillis() / step.toMillis())
     }
 
 
-    fun generateCode(securityToken: ByteArray? = null, modifier: String? = null): Int {
+    fun generateCode(securityToken: ByteArray? = null, modifier: String? = null, timeStep: Duration? = null): Int {
         // Allow a variance of no greater than 9 minutes in either direction
-        val currentTimeStep = getCurrentTimeStepNumber()
+        val currentTimeStep = getCurrentTimeStepNumber(timeStep)
         return computeTotp(securityToken ?: defaultSecurityToken, currentTimeStep, modifier)
     }
 
-    fun validateCode(code: Int, securityToken: ByteArray? = null, modifier: String? = null): Boolean {
+    fun validateCode(code: Int, securityToken: ByteArray? = null, modifier: String? = null, timeStep: Duration? = null): Boolean {
 
         // Allow a variance of no greater than 9 minutes in either direction
-        val currentTimeStep = getCurrentTimeStepNumber()
+        val currentTimeStep = getCurrentTimeStepNumber(timeStep)
 
         (-2..2).forEach {
             val computed = computeTotp(securityToken ?: defaultSecurityToken, currentTimeStep + it, modifier)
@@ -83,17 +85,17 @@ class Rfc6238TokenService(private val properties: Rfc6238TokenServiceProperties 
         return false
     }
 
-    fun generateCodeString(securityToken: String? = null, modifier: String? = null): String {
-        return generateCode(securityToken?.toByteArray(), modifier).toString().padStart(6, '0')
+    fun generateCodeString(securityToken: String? = null, modifier: String? = null, timeStep: Duration? = null): String {
+        return generateCode(securityToken?.toByteArray(), modifier, timeStep).toString().padStart(6, '0')
     }
 
-    fun validateCodeString(code: String, securityToken: String? = null, modifier: String? = null): Boolean {
+    fun validateCodeString(code: String, securityToken: String? = null, modifier: String? = null, timeStep: Duration? = null): Boolean {
         if(code.length != 6){
             return false
         }
         val num = code.trim().toIntOrNull()
         if(num != null){
-            return validateCode(num, securityToken?.toByteArray(), modifier)
+            return validateCode(num, securityToken?.toByteArray(), modifier, timeStep)
         }
         return false
     }

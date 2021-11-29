@@ -8,6 +8,7 @@ import ch.qos.logback.core.spi.AppenderAttachableImpl;
 import com.labijie.infra.logging.encoder.KafkaLayoutEncoder;
 import com.labijie.infra.logging.Tools;
 import com.labijie.infra.logging.encoder.KafkaLayoutEncoder;
+import java.time.Duration;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -186,7 +187,7 @@ public class KafkaAppender<E> extends UnsynchronizedAppenderBase<E> implements A
     public void stop() {
         super.stop();
         if (kafkaEnabled) {
-            producer.close(10, TimeUnit.SECONDS);
+            producer.close(Duration.ofSeconds(10));
         }
     }
 

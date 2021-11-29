@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration
  * @author Anders Xiao
  * @date 2018-08-12
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(NetworkConfig::class)
 class CommonsAutoConfiguration {
 

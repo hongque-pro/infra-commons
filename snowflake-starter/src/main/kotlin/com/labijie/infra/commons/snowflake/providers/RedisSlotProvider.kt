@@ -83,7 +83,7 @@ class RedisSlotProvider(
         val urls = url.split(",")
         return if (urls.size <= 1) {
             val c = RedisClient.create(url)
-            c.setDefaultTimeout(Duration.ofSeconds(10))
+            c.defaultTimeout = Duration.ofSeconds(10)
             c.connect()
         } else {
             val redisUrls = urls.map {
@@ -160,10 +160,11 @@ class RedisSlotProvider(
         } catch (e: RedisConnectionException) {
             return AcquireResult.RedisError
         }
+
         connection.use {
             val command = connection.sync()
             command.setTimeout(Duration.ofSeconds(10))
-
+            AutoCloseable {  }
             val result = setSlot(slot, command)
             when (result) {
                 AcquireResult.Success -> {

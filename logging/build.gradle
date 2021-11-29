@@ -1,11 +1,12 @@
 
 dependencies {
-    compile "org.apache.kafka:kafka-clients:$kafka_version"
-    compile "ch.qos.logback:logback-classic:$logback_version"
-    compile "ch.qos.logback:logback-core:$logback_version"
-    compile "com.google.protobuf:protobuf-java:$protobuf_version"
-    compile project(":core")
-    testCompile "com.esotericsoftware:kryo:$kryo_version"
+    implementation "org.apache.kafka:kafka-clients"
+    api "ch.qos.logback:logback-classic"
+    api "ch.qos.logback:logback-core"
+    api "com.google.protobuf:protobuf-java"
+    api project(":core")
+
+    testImplementation "com.esotericsoftware:kryo"
 
 }
 

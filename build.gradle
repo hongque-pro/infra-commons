@@ -1,65 +1,38 @@
 buildscript {
     ext {
-        global_version = '2.1.0'
+        global_version = '2.2.0'
 
-        kotlinVersion = '1.4.10'
+        kotlin_version = '1.6.0'
+        spring_boot_version= '2.6.0'
 
-        slf4j_version='1.7.30'
-        logback_version='1.2.3'
-        jackson_version='2.11.4'
-        netty_version='4.1.52.Final'
-        apache_commons_text_version = '1.9'
-        kafka_version = '2.8.0'
-        curator_version= '5.1.0'
-        zk_version = '3.6.3'
-        msgpack_version='0.8.22'
-        protobuf_version='3.15.8'
-        elasticsearch_version = '7.12.0'
-        commons_pool_version = '2.9.0'
-        corn_utils_version='9.1.5'
+        maven_repo = System.getenv("MAVEN_PROXY") ?: 'https://maven.aliyun.com/nexus/content/groups/public/'
+        publishing_plugin_version = '1.1.0'
 
-        spring_boot_version = '2.4.5'
-        spring_cloud_version='2020.0.2'
-        spring_dep_mgn_version='1.0.10.RELEASE'
-
-        mybatis_starter_version='2.1.3'
-        mybatis_version='3.5.6'
-        mybatis_pagehelper_version='5.2.0'
-        mybatis_dynamic_sql_version='1.2.1'
-        mybatis_generator_version='1.4.0'
-
-        jsqlparser_version='3.2'
-
-        kryo_version = '5.1.0'
-
-        junit_verions = '5.7.0'
-
-        lettuce_version = '6.1.1.RELEASE'
-        mockito_version = '1.10.19'
-
-        maven_repo= System.getenv("MAVEN_PROXY") ?: 'https://maven.aliyun.com/nexus/content/groups/public/'
-        nexus_staging_version = '0.22.0'
+        infra_bom_version = '2.2.0'
     }
     repositories {
         mavenLocal()
-        maven { url maven_repo }
+        if (maven_repo != null) {
+            maven {
+                url maven_repo
+                allowInsecureProtocol true
+            }
+        }
         mavenCentral()
         maven { url 'https://repo.spring.io/plugins-snapshot' }
     }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${spring_boot_version}")
-        // https://mvnrepository.com/artifact/io.spring.gradle/dependency-management-plugin
-        classpath "io.spring.gradle:dependency-management-plugin:$spring_dep_mgn_version"
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
-        classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
-        classpath("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:$nexus_staging_version")
-    }
-
 }
 
-apply plugin: 'io.codearte.nexus-staging'
+plugins {
+    id "org.jetbrains.kotlin.plugin.spring" version "$kotlin_version"  apply false
+    id "org.springframework.boot" version "$spring_boot_version" apply false
+    id "org.jetbrains.kotlin.jvm" version "$kotlin_version" apply false
+    id "io.github.gradle-nexus.publish-plugin" version "$publishing_plugin_version" apply false
+}
 
-static Boolean  isNotNullOrBlank(Object s){
+apply plugin: 'io.github.gradle-nexus.publish-plugin'
+
+static Boolean isNotNullOrBlank(Object s) {
     return !(s == null || s.toString().trim().length() == 0)
 }
 
@@ -71,19 +44,19 @@ static canBeSign(Project project) {
 
 static getPropertyOrCmdArgs(Project project, String propertyName, String cmdArgName) {
     def propertyValue = project.hasProperty(propertyName) ? project.property(propertyName).toString() : null
-    def v = (System.properties.getProperty(cmdArgName) ?: propertyValue ) ?: System.getenv(propertyName)
+    def v = (System.properties.getProperty(cmdArgName) ?: propertyValue) ?: System.getenv(propertyName)
     return isNotNullOrBlank(v) ? v : null
 }
 
 allprojects {
     apply plugin: 'kotlin'
-    apply plugin: 'signing'
     apply plugin: 'kotlin-spring'
     apply plugin: 'java-library'
-    if(!project.name.startsWith("dummy")) {
+
+    if(!project.name.startsWith("dummy") && project.name != "oauth2-resource-token-starter") {
         apply plugin: 'maven-publish'
+        apply plugin: 'signing'
     }
-    apply plugin: 'io.spring.dependency-management'
 
 
     group = 'com.labijie.infra'
@@ -92,8 +65,8 @@ allprojects {
     compileJava.options.encoding = "UTF-8"
     javadoc.options.encoding = "UTF-8"
 
-    group=project.rootProject.group
-    version= global_version
+    group = project.rootProject.group
+    version = global_version
 
     sourceCompatibility = 1.8
 
@@ -122,16 +95,14 @@ allprojects {
 
     repositories {
         mavenLocal()
-        maven { url maven_repo }
+        if (maven_repo != null) {
+            maven {
+                url maven_repo
+                allowInsecureProtocol true
+            }
+        }
         mavenCentral()
         maven { url "https://repo.spring.io/plugins-release" }
-    }
-
-    dependencyManagement {
-        imports {
-            //spring bom helps us to declare dependencies without specifying version numbers.
-            mavenBom "org.springframework.cloud:spring-cloud-dependencies:$spring_cloud_version"
-        }
     }
 
     test {
@@ -140,40 +111,31 @@ allprojects {
 
 
     dependencies {
-        testCompile group: 'org.jetbrains.kotlin', name: 'kotlin-test-junit5', version: kotlinVersion
-        testImplementation("org.junit.jupiter:junit-jupiter-api:$junit_verions")
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit_verions")
-        testCompile "org.mockito:mockito-all:$mockito_version"
-        compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
-    }
+        implementation platform("com.labijie.bom:lib-dependencies:$infra_bom_version")
 
-    configurations.all {
-        resolutionStrategy {
-            eachDependency { DependencyResolveDetails details ->
-                if (details.requested.group == 'io.netty') {
-                    details.useVersion netty_version
-                }
-                if (details.requested.group == 'org.apache.curator') {
-                    details.useVersion curator_version
-                }
-            }
-        }
+        api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+        api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
+        testImplementation "org.jetbrains.kotlin:kotlin-test-junit5:$kotlin_version"
+        testImplementation "org.junit.jupiter:junit-jupiter-api"
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+        testImplementation "org.mockito:mockito-all"
     }
 }
 
 
-
 subprojects {
     def u = getPropertyOrCmdArgs(project, "PUB_USER", "u")
-    def p =getPropertyOrCmdArgs(project, "PUB_PWD", "p")
+    def p = getPropertyOrCmdArgs(project, "PUB_PWD", "p")
     def s = getPropertyOrCmdArgs(project, "PUB_URL", "s")
+    if (!project.name.startsWith("dummy")) {
 
-    if(!project.name.startsWith("dummy")) {
         publishing {
             publications {
                 mavenJava(MavenPublication) {
+
                     artifactId = project.name == "core" ? "commons" : "commons-" + project.name
-                    from components.java
+                    from((components.findByName("javaPlatform") ?: components.findByName("java")))
                     pom {
                         name = project.name
                         description = 'infrastructure library'
@@ -213,10 +175,12 @@ subprojects {
             }
 
             repositories {
-                if (isNotNullOrBlank(u) && isNotNullOrBlank(p)) {
+                // publish to private nexus
+                // gradle -Du="username" -Dp='password' -Ds='http://your-nexus-address/repository/maven-releases/' publishMavenJavaPublicationToNexusRepository
+                if (isNotNullOrBlank(u) && isNotNullOrBlank(p) && isNotNullOrBlank(s)) {
                     maven {
-                        name = "OSSRH"
-                        url = s ?: "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+                        name = "nexus"
+                        url = s
                         credentials {
                             username = u
                             password = p
@@ -228,12 +192,15 @@ subprojects {
     }
 }
 
-nexusStaging {
-    def u = getPropertyOrCmdArgs(project, "PUB_USER", "u")
-    def p =getPropertyOrCmdArgs(project, "PUB_PWD", "p")
-    username = u
-    password = p
-    packageGroup = "com.labijie"
+nexusPublishing {
+    repositories {
+        sonatype {
+            def u = getPropertyOrCmdArgs(project, "PUB_USER", "u")
+            def p = getPropertyOrCmdArgs(project, "PUB_PWD", "p")
+            username = u
+            password = p
+        }
+    }
 }
 
 

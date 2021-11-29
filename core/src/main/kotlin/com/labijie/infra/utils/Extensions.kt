@@ -44,7 +44,7 @@ fun nowString(zoneOffset: ZoneOffset = ZoneOffset.UTC): String {
 }
 
 fun Throwable.printStackToString(): String {
-    var stack: String = ""
+    var stack: String
     ByteArrayOutputStream().use {
         PrintWriter(it).use {
             this.printStackTrace(it)

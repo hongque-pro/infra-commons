@@ -17,7 +17,7 @@ import org.springframework.util.StringUtils
  * @date 18-9-4
  * @since JDK1.8
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 class KafkaAutoConfiguration {
 
     @Bean
@@ -30,10 +30,10 @@ class KafkaAutoConfiguration {
         val properties = kafkaConfig.toProperties()
 
         val defaultSerializer = StringSerializer::class.qualifiedName
-        if (StringUtils.isEmpty(properties["key.serializer"])) {
+        if ((properties["key.serializer"]?.toString()).isNullOrBlank()) {
             properties.setProperty("key.serializer", defaultSerializer)
         }
-        if (StringUtils.isEmpty(properties["value.serializer"])) {
+        if ((properties["value.serializer"]?.toString()).isNullOrBlank()) {
             properties.setProperty("value.serializer", defaultSerializer)
         }
 

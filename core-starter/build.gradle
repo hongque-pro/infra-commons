@@ -1,6 +1,5 @@
 
 dependencies {
-    compile project(":core")
-    compile "org.springframework.boot:spring-boot-starter:$spring_boot_version"
-    compile "org.springframework.cloud:spring-cloud-commons"
+    api project(":core")
+    api "org.springframework.boot:spring-boot-starter:$spring_boot_version"
 }

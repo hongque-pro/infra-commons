@@ -3,10 +3,8 @@ package com.labijie.infra.spring.configuration
 import com.labijie.infra.InfrastructureException
 import com.labijie.infra.utils.findIpAddress
 import com.labijie.infra.utils.ifNullOrBlank
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.cloud.commons.util.InetUtils
-import org.springframework.cloud.commons.util.InetUtilsProperties
+import org.springframework.core.env.Environment
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -16,9 +14,11 @@ import java.util.concurrent.ConcurrentHashMap
  */
 @ConfigurationProperties("infra")
 class NetworkConfig constructor(
-        @param:Autowired(required = false)private val inetUtilsProperties: InetUtilsProperties?){
+        private val env: Environment
+){
     companion object {
         const val DEFAULT_NET_NAME = "__default"
+        const val SPRING_CLOUD_NETWORK_CONFIG = "spring.cloud.inetutils.preferred-networks"
     }
 
 
@@ -32,8 +32,10 @@ class NetworkConfig constructor(
 
         val isDefault = networkName == DEFAULT_NET_NAME
         val ip = ipAddresses.getOrPut(name) set@{
-            if((networks.isEmpty() || !networks.containsKey(name)) && inetUtilsProperties != null && inetUtilsProperties.preferredNetworks.isNotEmpty()){
-                return@set InetUtils(inetUtilsProperties).findFirstNonLoopbackAddress().hostAddress
+            val network = env.getProperty(SPRING_CLOUD_NETWORK_CONFIG, "")
+            val found = findIpAddress(network)
+            if(!found.isNullOrBlank()){
+                return found
             }
             val mask = if(isDefault) this.networks.values.firstOrNull().ifNullOrBlank("*")!! else this.networks.getOrPut(name) { "*" }
             findIpAddress(mask).ifNullOrBlank("")!!

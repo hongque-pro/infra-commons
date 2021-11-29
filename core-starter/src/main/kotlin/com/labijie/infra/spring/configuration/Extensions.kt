@@ -20,7 +20,6 @@ fun Environment.getApplicationName(throwIfNotConfigured:Boolean = true):String {
 val Environment.isDevelopment
 get() = this.activeProfiles.contains(Constants.LocalProfile) || this.activeProfiles.contains(Constants.DevelopmentProfile)
 
-
 val Environment.isProduction
     get() = this.activeProfiles.contains(Constants.ProductionProfile)
 

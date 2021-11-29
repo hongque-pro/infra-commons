@@ -20,6 +20,8 @@ kafka: 2.8.0 (该版本移除了 ZK 依赖)
 
 ## 开发环境兼容性：
 
+infra_version 2.1   
+
 |组件|版本|说明|
 |--------|--------|--------|
 |   kotlin    |      1.4.10    |           |
@@ -29,7 +31,24 @@ kafka: 2.8.0 (该版本移除了 ZK 依赖)
 |   spring framework    |      5.3.6   |           |
 |   spring dpendency management    |      1.0.10.RELEASE    |           |
 
-一切开始的地方，所有组件的依赖项.
+---
+
+infra_version 2.1
+
+|组件|版本|说明|
+|--------|--------|--------|
+|   kotlin    |      1.6.0    |           |
+|   jdk    |      1.8   |           |
+|   spring boot    |      2.6.0    |           |
+|  spring cloud    |      --    |   已移除，不再作为依赖项  |
+|   spring framework    |      5.3.13   |           |
+|   spring dpendency management    |      --    |     已移除，使用 gradle 管理 bom      |
+
+---
+
+2.2 开始，可以使用 infra-bom 控制所有依赖项版本.
+
+关于 infra-bom，请参考 https://github.com/hongque-pro/infra-bom
 
 ## 发布到自己的 Nexus
 

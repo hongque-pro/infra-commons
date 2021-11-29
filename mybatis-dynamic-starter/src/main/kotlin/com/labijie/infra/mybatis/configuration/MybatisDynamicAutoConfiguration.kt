@@ -9,6 +9,6 @@ import org.springframework.context.annotation.Configuration
  * @author Anders Xiao
  * @date 2018-12-27
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @AutoConfigureBefore(MybatisAutoConfiguration::class)
 class MybatisDynamicAutoConfiguration

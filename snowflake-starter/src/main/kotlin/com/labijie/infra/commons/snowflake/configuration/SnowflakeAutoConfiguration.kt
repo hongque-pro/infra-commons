@@ -22,7 +22,7 @@ import org.springframework.core.env.Environment
  * @date 2018-08-12
  */
 @AutoConfigureAfter(Environment::class)
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(SnowflakeConfig::class)
 class SnowflakeAutoConfiguration {
 

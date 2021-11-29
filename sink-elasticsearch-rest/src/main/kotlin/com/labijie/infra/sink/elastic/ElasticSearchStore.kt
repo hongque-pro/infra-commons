@@ -39,12 +39,18 @@ abstract class ElasticSearchStore<V>(
         addType = !(esVersion.startsWith("7.") || esVersion.startsWith("8."))
     }
 
+    @Suppress("DEPRECATION")
     @Throws(Exception::class)
     fun createIndicesIfNotExists(index: String) {
         val indexName = index.toLowerCase()
         if (!this.indexCreatedTable.contains(indexName)) {
             val indicesClient = this.client.indices()
-            val exists = indicesClient.exists(GetIndexRequest().indices(indexName), RequestOptions.DEFAULT)
+            val exists = if(addType){
+                //7.x 以前
+                indicesClient.exists(GetIndexRequest().indices(indexName), RequestOptions.DEFAULT)
+            }else{
+                indicesClient.exists(org.elasticsearch.client.indices.GetIndexRequest(indexName), RequestOptions.DEFAULT)
+            }
             if (exists) {
                 this.indexCreatedTable.add(indexName)
                 return
