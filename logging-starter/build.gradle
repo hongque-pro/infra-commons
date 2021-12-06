@@ -1,5 +1,5 @@
 dependencies {
     api(project(':logging'))
-    api "org.springframework.boot:spring-boot-configuration-processor:${spring_boot_version}"
-    api "org.springframework.boot:spring-boot-autoconfigure:${spring_boot_version}"
+    api "org.springframework.boot:spring-boot-configuration-processor"
+    api "org.springframework.boot:spring-boot-autoconfigure"
 }

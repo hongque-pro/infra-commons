@@ -126,7 +126,6 @@ class JdbcSlotProvider constructor(
         if (this.stopped) {
             return SecondIntervalTimeoutTimer.TaskResult.Break
         }
-        val id = instanceId
         val expired = getTimeExpired()
         val slotValue = getSlotValue(slot ?: throw RuntimeException("slot value is null currently, jdbc slot update task fault."))
 
