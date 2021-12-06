@@ -2,11 +2,17 @@ server:
   port: 8899
 
 spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:dummy
+    username: root
+    password: test
   application:
     name: dummy
     
 infra:
-  distribution:
-    lock:
-      server: 192.168.199.248:2181
+  exposed:
+    generate-schema: true
+  snowflake:
+    provider: jdbc
 

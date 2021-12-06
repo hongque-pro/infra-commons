@@ -3,7 +3,7 @@ package com.labijie.infra.commons.snowflake.providers
 import com.labijie.infra.commons.snowflake.ISlotProvider
 import com.labijie.infra.commons.snowflake.SnowflakeException
 import com.labijie.infra.commons.snowflake.WorkNodeInfo
-import com.labijie.infra.commons.snowflake.configuration.SnowflakeConfig
+import com.labijie.infra.commons.snowflake.configuration.SnowflakeProperties
 import com.labijie.infra.spring.configuration.NetworkConfig
 import com.labijie.infra.spring.configuration.getApplicationName
 import com.labijie.infra.spring.configuration.isDevelopment
@@ -32,9 +32,9 @@ class ZookeeperSlotProvider(
         applicationName: String,
         private val isDevelopment:Boolean,
         private val networkConfig: NetworkConfig,
-        private val snowflakeConfig: SnowflakeConfig) : ISlotProvider, AutoCloseable {
+        private val snowflakeConfig: SnowflakeProperties) : ISlotProvider, AutoCloseable {
 
-    constructor(environment: Environment, networkConfig: NetworkConfig, snowflakeConfig: SnowflakeConfig):
+    constructor(environment: Environment, networkConfig: NetworkConfig, snowflakeConfig: SnowflakeProperties):
             this(environment.getApplicationName(), environment.isDevelopment, networkConfig, snowflakeConfig)
 
 

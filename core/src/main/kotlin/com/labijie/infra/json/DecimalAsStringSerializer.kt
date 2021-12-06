@@ -17,7 +17,7 @@ class DecimalAsStringSerializer : JsonSerializer<BigDecimal>() {
     }
 
     override fun serialize(value: BigDecimal?, gen: JsonGenerator?, serializers: SerializerProvider?) {
-        var s = value?.stripTrailingZeros()?.toPlainString()
+        val s = value?.stripTrailingZeros()?.toPlainString()
         gen?.writeString(s)
     }
 }

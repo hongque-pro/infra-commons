@@ -7,7 +7,6 @@ import java.io.ByteArrayOutputStream
 import java.io.PrintWriter
 import java.lang.reflect.InvocationTargetException
 import java.net.NetworkInterface
-import java.nio.ByteBuffer
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -21,8 +20,20 @@ import kotlin.reflect.full.isSubclassOf
  * @author Anders Xiao
  * @date 2018-08-12
  */
+
+private const val CGLIB_CLASS_SEPARATOR: String = "$$"
+
 val Any.logger: Logger
-    get() = LoggerFactory.getLogger(this::class.java)
+    get() {
+        val clazz = this::class.java
+        if (clazz.name.contains(CGLIB_CLASS_SEPARATOR)) {
+            val superclass = clazz.superclass
+            if (superclass != null && superclass != Any::class.java) {
+                return LoggerFactory.getLogger(superclass)
+            }
+        }
+        return LoggerFactory.getLogger(this::class.java)
+    }
 
 fun String?.ifNullOrBlank(default: String?): String? {
     if (this.isNullOrBlank()) {

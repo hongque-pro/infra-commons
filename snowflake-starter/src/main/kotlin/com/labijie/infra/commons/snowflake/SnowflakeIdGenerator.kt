@@ -1,14 +1,14 @@
 package com.labijie.infra.commons.snowflake
 
 import com.labijie.infra.IIdGenerator
-import com.labijie.infra.commons.snowflake.configuration.SnowflakeConfig
+import com.labijie.infra.commons.snowflake.configuration.SnowflakeProperties
 
 /**
  * Created with IntelliJ IDEA.
  * @author Anders Xiao
  * @date 2018-08-12
  */
-class SnowflakeIdGenerator(snowflakeConfig: SnowflakeConfig, slotProviderFactory: ISlotProviderFactory) : IIdGenerator {
+class SnowflakeIdGenerator(snowflakeConfig: SnowflakeProperties, slotProviderFactory: ISlotProviderFactory) : IIdGenerator {
 
     private var slotId: Int = -1
     private var kernel: SnowflakeKernel? = null

@@ -4,7 +4,7 @@ import io.lettuce.core.RedisClient
 import io.lettuce.core.RedisException
 import io.lettuce.core.RedisURI
 import com.labijie.infra.commons.snowflake.SnowflakeException
-import com.labijie.infra.commons.snowflake.configuration.SnowflakeConfig
+import com.labijie.infra.commons.snowflake.configuration.SnowflakeProperties
 import com.labijie.infra.commons.snowflake.providers.RedisSlotProvider
 import com.labijie.infra.spring.configuration.NetworkConfig
 import org.junit.jupiter.api.Assertions
@@ -25,7 +25,7 @@ class RedisSlotProviderTester {
     }
 
     private fun createProvider(): RedisSlotProvider {
-        val snowConfig = SnowflakeConfig().apply {
+        val snowConfig = SnowflakeProperties().apply {
             this.provider = "redis"
             this.redis.url = testRedisUrl
         }

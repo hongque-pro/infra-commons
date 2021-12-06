@@ -3,6 +3,7 @@ package com.labijie.infra.spring.configuration
 import com.labijie.infra.utils.Constants
 import com.labijie.infra.utils.ifNullOrBlank
 import org.springframework.core.env.Environment
+import org.springframework.util.ClassUtils
 
 /**
  * Created with IntelliJ IDEA.
@@ -25,3 +26,4 @@ val Environment.isProduction
 
 val Environment.IsTest
     get() = this.activeProfiles.contains(Constants.TestProfile)
+

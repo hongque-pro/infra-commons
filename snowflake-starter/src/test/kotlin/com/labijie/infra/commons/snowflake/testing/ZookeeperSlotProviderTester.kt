@@ -2,12 +2,11 @@ package com.labijie.infra.commons.snowflake.testing
 
 import com.labijie.infra.commons.snowflake.SnowflakeException
 import com.labijie.infra.commons.snowflake.providers.ZookeeperSlotProvider
-import com.labijie.infra.commons.snowflake.configuration.SnowflakeConfig
+import com.labijie.infra.commons.snowflake.configuration.SnowflakeProperties
 import com.labijie.infra.spring.configuration.NetworkConfig
 import com.labijie.infra.utils.ifNullOrBlank
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.springframework.core.env.StandardEnvironment
 import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.full.functions
 import kotlin.reflect.jvm.isAccessible
@@ -103,7 +102,7 @@ class ZookeeperSlotProviderTester {
     }
 
     private fun createSlotProvider(server: String? = null, timeoutMs: Int = 1000): ZookeeperSlotProvider {
-        val config = SnowflakeConfig().apply {
+        val config = SnowflakeProperties().apply {
             scope = "dummy"
             zk.server = server.ifNullOrBlank(TEST_ZK_SERVER)!!
             zk.sessionTimeoutMs = timeoutMs
