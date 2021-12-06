@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap
  */
 @ConfigurationProperties("infra")
 class NetworkConfig constructor(
-        private val env: Environment
+        private val env: Environment?
 ){
     companion object {
         const val DEFAULT_NET_NAME = "__default"
@@ -32,10 +32,12 @@ class NetworkConfig constructor(
 
         val isDefault = networkName == DEFAULT_NET_NAME
         val ip = ipAddresses.getOrPut(name) set@{
-            val network = env.getProperty(SPRING_CLOUD_NETWORK_CONFIG, "")
-            val found = findIpAddress(network)
-            if(!found.isNullOrBlank()){
-                return found
+            val network = env?.getProperty(SPRING_CLOUD_NETWORK_CONFIG, "")
+            if(!network.isNullOrBlank()) {
+                val found = findIpAddress(network)
+                if (!found.isNullOrBlank()) {
+                    return found
+                }
             }
             val mask = if(isDefault) this.networks.values.firstOrNull().ifNullOrBlank("*")!! else this.networks.getOrPut(name) { "*" }
             findIpAddress(mask).ifNullOrBlank("")!!

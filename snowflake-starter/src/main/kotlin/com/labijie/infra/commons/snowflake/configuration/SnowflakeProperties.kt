@@ -10,11 +10,12 @@ import org.springframework.context.annotation.Configuration
  */
 @Configuration(proxyBeanMethods = false)
 @ConfigurationProperties("infra.snowflake")
-class SnowflakeConfig {
+class SnowflakeProperties {
     var scope: String = "default"
     var startTimestamp: Long = 1480166465631L //2016-11-26 21:21:05
     var provider: String = "zookeeper"
     var zk: ZookeeperConfig = ZookeeperConfig()
     var static: StaticConfig = StaticConfig()
     var redis: RedisConfig = RedisConfig()
+    var jdbc: JdbcConfig = JdbcConfig()
 }

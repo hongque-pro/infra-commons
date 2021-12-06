@@ -2,7 +2,7 @@
   "group":[
     {
       "name":"infra.snowflake",
-      "type": "com.labijie.infra.commons.snowflake.configuration.SnowflakeConfig"
+      "type": "com.labijie.infra.commons.snowflake.configuration.SnowflakeProperties"
     },
     {
       "name":"infra.snowflake.zk",
@@ -15,6 +15,10 @@
     {
       "name":"infra.snowflake.redis",
       "type": "com.labijie.infra.commons.snowflake.configuration.RedisConfig"
+    },
+    {
+      "name":"infra.snowflake.jdbc",
+      "type": "com.labijie.infra.commons.snowflake.configuration.JdbcConfig"
     }
   ],
   "properties":[
@@ -74,12 +78,28 @@
       "sourceType": "com.labijie.infra.commons.snowflake.configuration.StaticConfig",
       "description": "slot id, must be between 1 and 1024",
       "defaultValue": 1
+    },
+
+    {
+      "name": "infra.snowflake.jdbc.instance-identity",
+      "type": "com.labijie.infra.commons.snowflake.configuration.InstanceIdentity",
+      "sourceType": "com.labijie.infra.commons.snowflake.configuration.JdbcConfig",
+      "defaultValue": "UUID"
+    },
+    {
+      "name": "infra.snowflake.jdbc.timeout",
+      "type": "java.time.Duration",
+      "sourceType": "com.labijie.infra.commons.snowflake.configuration.JdbcConfig",
+      "defaultValue": "1h"
     }
   ],
   "hints": [
     {
       "name": "infra.snowflake.provider",
       "values": [
+        {
+          "value": "none"
+        },
         {
           "value": "zookeeper"
         },
@@ -88,6 +108,9 @@
         },
         {
           "value": "static"
+        },
+        {
+          "value": "jdbc"
         }
       ]
     }

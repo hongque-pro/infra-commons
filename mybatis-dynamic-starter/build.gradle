@@ -4,9 +4,7 @@ dependencies{
         exclude module:'spring-boot-starter-jdbc'
         exclude module:'mybatis'
     }
-    api ("org.springframework.boot:spring-boot-starter-jdbc"){
-        exclude module:'jsqlparser'
-    }
+    api ("org.springframework.boot:spring-boot-starter-jdbc")
 
     api "org.mybatis:mybatis"
     api "org.mybatis.dynamic-sql:mybatis-dynamic-sql"

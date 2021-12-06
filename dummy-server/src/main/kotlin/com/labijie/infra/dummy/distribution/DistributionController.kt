@@ -1,6 +1,5 @@
 package com.labijie.infra.dummy.distribution
 
-import com.labijie.infra.distribution.annotation.DistributedSynchronized
 import com.labijie.infra.spring.configuration.NetworkConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.GetMapping
@@ -17,7 +16,6 @@ class DistributionController {
     lateinit var network: NetworkConfig
 
     @GetMapping("/sync")
-    @DistributedSynchronized
     fun sync(): String {
 
         return "OK! (${network.getIPAddress()})"

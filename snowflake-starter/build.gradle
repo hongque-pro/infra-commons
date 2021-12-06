@@ -1,6 +1,9 @@
-
+plugins {
+    id "com.google.devtools.ksp" version "$ksp_version"
+}
 dependencies {
     api project(":core-starter")
+
     implementation "io.lettuce:lettuce-core"
 
     implementation("org.apache.curator:curator-framework") {
@@ -10,5 +13,8 @@ dependencies {
         exclude module: "slf4j-log4j12"
         exclude module: "log4j"
     }
-//    compile group: 'com.coreos', name: 'jetcd-core', version: '0.0.2'
+
+    compileOnly("com.labijie.orm:exposed-starter:${infra_orm_version}")
+
+    ksp("com.labijie.orm:exposed-generator:${infra_orm_version}")
 }
