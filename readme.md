@@ -33,7 +33,7 @@ infra_version 2.1
 
 ---
 
-infra_version 2.1
+infra_version 2.2
 
 |组件|版本|说明|
 |--------|--------|--------|
