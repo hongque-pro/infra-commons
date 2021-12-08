@@ -9,5 +9,5 @@ object Versions {
     var infraBom = "2.6.1"
     var infraOrm = "1.0.0"
     var ksp = "1.6.0-1.0.1"
-    var infraPlugin="1.0.2"
+    var infraPlugin = "1.0.3"
 }
