@@ -1,6 +1,6 @@
 
-plugins {
-    id("com.google.devtools.ksp")
+infra {
+    useInfraOrmGenerator(Versions.infraOrm)
 }
 
 dependencies {
@@ -17,8 +17,6 @@ dependencies {
     }
 
     compileOnly("com.labijie.orm:exposed-starter:${Versions.infraOrm}")
-
-    ksp("com.labijie.orm:exposed-generator:${Versions.infraOrm}")
 
     testImplementation("com.labijie.orm:exposed-test-starter:${Versions.infraOrm}")
 }
