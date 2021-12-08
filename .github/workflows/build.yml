@@ -37,7 +37,5 @@ jobs:
         cat gradle.properties
     - name: Build with Gradle
       run: gradle clean build -x test -x kspKotlin
-    - name: Publish to Maven Central
-      run: gradle publish
-    - name: Nexus Staging
-      run: gradle closeAndReleaseRepository
+    - name: Publish To Maven Central
+      run: gradle publishToSonatype closeAndReleaseSonatypeStagingRepository
