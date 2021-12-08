@@ -15,6 +15,7 @@ allprojects {
             infraBomVersion = Versions.infraBom
             kotlinVersion = Versions.kotlin
             useMavenProxy = true
+            useMavenProxy = false
         }
 
         useNexusPublish()
