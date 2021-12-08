@@ -29,12 +29,13 @@ import java.util.concurrent.TimeUnit
  * @date 2018-08-10
  */
 class ZookeeperSlotProvider(
-        applicationName: String,
-        private val isDevelopment:Boolean,
-        private val networkConfig: NetworkConfig,
-        private val snowflakeConfig: SnowflakeProperties) : ISlotProvider, AutoCloseable {
+    applicationName: String,
+    private val isDevelopment: Boolean,
+    private val networkConfig: NetworkConfig,
+    private val snowflakeConfig: SnowflakeProperties
+) : ISlotProvider, AutoCloseable {
 
-    constructor(environment: Environment, networkConfig: NetworkConfig, snowflakeConfig: SnowflakeProperties):
+    constructor(environment: Environment, networkConfig: NetworkConfig, snowflakeConfig: SnowflakeProperties) :
             this(environment.getApplicationName(), environment.isDevelopment, networkConfig, snowflakeConfig)
 
 
@@ -42,8 +43,9 @@ class ZookeeperSlotProvider(
     var maxSlotCount: Int = 1024
 
     private var startupLock = Any()
-    private var isStarted = false
-    private var startWaiter: CountDownLatch? = CountDownLatch(1)
+    var isStarted = false
+        private set
+    private var startWaiter: CountDownLatch? = null
     private val serviceName = applicationName
     private val instanceStamp = UUID.randomUUID().toString()
 
@@ -66,29 +68,36 @@ class ZookeeperSlotProvider(
     @Throws(SnowflakeException::class)
     private fun createClient(waitTimeoutMs: Long?): CuratorFramework {
         val sleepMs = 10000
-        val retryPolicy = RetryForever(sleepMs) //断线重连策略，这里使用仅重试一次的策略
-        client = CuratorFrameworkFactory.builder()
-                .connectString(snowflakeConfig.zk.server)
-                .sessionTimeoutMs(Math.max(snowflakeConfig.zk.sessionTimeoutMs, TimeUnit.SECONDS.toMillis(20).toInt())) //1小时节点超时
-                .retryPolicy(retryPolicy)
-                .namespace("snowflake_slots")
-                .build()
-
-        this.client!!.connectionStateListenable.addListener(this.connectionStateListener);
-        this.client!!.start()
-        if (waitTimeoutMs != null) {
-            if (!this.startWaiter!!.await(waitTimeoutMs, TimeUnit.MILLISECONDS)) {
-                throw SnowflakeException("connect to zookeeper timeout, after $waitTimeoutMs ms, still not receiving the zookeeper server (${snowflakeConfig.zk.server}) response.")
+        val retryPolicy = RetryForever(sleepMs) //断线重连，永远重连
+        val c = CuratorFrameworkFactory.builder()
+            .connectString(snowflakeConfig.zk.server)
+            .sessionTimeoutMs(
+                snowflakeConfig.zk.sessionTimeout.toMillis().toInt()
+                    .coerceAtLeast(TimeUnit.SECONDS.toMillis(20).toInt())
+            ) //1小时节点超时
+            .retryPolicy(retryPolicy)
+            .namespace("snowflake_slots")
+            .build()
+        c.connectionStateListenable.addListener(this.connectionStateListener)
+        this.startWaiter = CountDownLatch(1)
+        try {
+            c.start()
+            if (waitTimeoutMs != null) {
+                if (!this.startWaiter!!.await(waitTimeoutMs, TimeUnit.MILLISECONDS)) {
+                    c.close()
+                    throw SnowflakeException("connect to zookeeper timeout, after $waitTimeoutMs ms, still not receiving the zookeeper server (${snowflakeConfig.zk.server}) response.")
+                }
+            } else {
+                this.startWaiter!!.await()
             }
-        } else {
-            this.startWaiter!!.await()
+        } finally {
+            this.startWaiter = null
         }
-        this.startWaiter = null
-        return this.client!!
+        return c
     }
 
 
-    fun connect(timeoutMs: Long = 15000L): CuratorFramework? {
+    private fun connect(timeoutMs: Long = 15000L): CuratorFramework? {
 
         if (!isStarted) {
             synchronized(startupLock) {
@@ -98,16 +107,17 @@ class ZookeeperSlotProvider(
                         this.client = this.createClient(timeoutMs)
                     } catch (ex: SnowflakeException) {
                         if (this.isDevelopment) {
-                            logger.warn("Because the current application profile is \"${Constants.LocalProfile}\" or \"${Constants.DevelopmentProfile}\", snowflake will ignore obtaining slot from the zookeeper.")
-                            isStarted = true
-                            return null;
+                            logger.error("Because the current application profile is \"${Constants.LocalProfile}\" or \"${Constants.DevelopmentProfile}\", snowflake will ignore obtaining slot from the zookeeper.")
+                            //isStarted = true
+                            return null
                         } else {
                             throw ex
                         }
                     }
                     logger.info("Waiting for ZookeeperSlotProvider connect to zookeeper server...")
                     try {
-                        this.client!!.create().withMode(CreateMode.PERSISTENT).forPath("/${snowflakeConfig.scope}", byteArrayOf(1))
+                        this.client!!.create().withMode(CreateMode.PERSISTENT)
+                            .forPath("/${snowflakeConfig.scope}", byteArrayOf(1))
                     } catch (ex: NodeExistsException) {
                         //节点已经存在忽略该错误
                     }
@@ -136,14 +146,14 @@ class ZookeeperSlotProvider(
     @Throws(SnowflakeException::class)
     override fun acquireSlot(throwIfNoneSlot: Boolean): Int? {
 
-        val client = this.connect() ?: return 1
+        val client = this.connect(this.snowflakeConfig.zk.connectTimeout.toMillis().coerceAtLeast(5000)) ?: return 1
         val ipAddress = networkConfig.getIPAddress(throwIfNotFound = !isDevelopment)
         val currentNode = WorkNodeInfo(ipAddress, this.serviceName, instanceStamp)
         for (i in 1..this.maxSlotCount) {
             val path = "/${snowflakeConfig.scope}/slot_$i"
             try {
                 client.create().withMode(CreateMode.EPHEMERAL)
-                        .forPath(path, currentNode.toBytes())
+                    .forPath(path, currentNode.toBytes())
             } catch (ex: NodeExistsException) {
                 val data = client.data.forPath(path)
                 try {
@@ -181,5 +191,4 @@ class ZookeeperSlotProvider(
             throw SnowflakeException("The snowflake scope name can only contain lowercase letters, underscores numbers and length must be less than 32.")
         }
     }
-
 }

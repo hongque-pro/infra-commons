@@ -8,6 +8,7 @@ import com.labijie.infra.utils.ifNullOrBlank
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.lang.reflect.InvocationTargetException
+import java.time.Duration
 import kotlin.reflect.full.functions
 import kotlin.reflect.jvm.isAccessible
 
@@ -36,26 +37,14 @@ class ZookeeperSlotProviderTester {
     }
 
     @Test
-    fun testSlotRequest() {
-        try {
-            createSlotProvider().use {
-
-                val slot1 = it.acquireSlot()
-                Assertions.assertEquals(1, slot1)
-
-                val slot2 = it.acquireSlot()
-                Assertions.assertEquals(2, slot2)
-            }
-        } catch (ex: SnowflakeException) {
-
-        }
-    }
-
-    @Test
     fun testReuseSlot() {
+        val set = mutableSetOf<ZookeeperSlotProvider>()
         try {
             val provider1 = createSlotProvider()
             val provider2 = createSlotProvider()
+            set.add(provider1)
+            set.add(provider2)
+
             try {
                 val slot1 = provider1.acquireSlot()
 
@@ -64,13 +53,18 @@ class ZookeeperSlotProviderTester {
                 provider1.disconnect()
 
                 val slot2 = provider2.acquireSlot()
-                Assertions.assertEquals(1, slot2)
+                val excepted = if(provider2.isStarted) 2 else 1
+                Assertions.assertEquals(excepted, slot2)
             } finally {
                 provider1.disconnect()
                 provider2.disconnect()
             }
-        } catch (ex: SnowflakeException) {
+        } catch (_: SnowflakeException) {
 
+        }finally {
+            set.forEach {
+                it.disconnect()
+            }
         }
     }
 
@@ -84,7 +78,7 @@ class ZookeeperSlotProviderTester {
                 provider1.maxSlotCount = testCount
                 set.add(provider1)
 
-                if (it == (testCount + 1)) {
+                if (it == (testCount + 1) && provider1.isStarted) {
                     Assertions.assertThrows(SnowflakeException::class.java) {
                         provider1.acquireSlot()
                     }
@@ -92,7 +86,7 @@ class ZookeeperSlotProviderTester {
                     provider1.acquireSlot()
                 }
             }
-        } catch (ex: SnowflakeException) {
+        } catch (_: SnowflakeException) {
 
         } finally {
             set.forEach {
@@ -101,14 +95,17 @@ class ZookeeperSlotProviderTester {
         }
     }
 
-    private fun createSlotProvider(server: String? = null, timeoutMs: Int = 1000): ZookeeperSlotProvider {
+    private fun createSlotProvider(
+        server: String? = null,
+        slotTimeout: Duration = Duration.ofSeconds(1)
+    ): ZookeeperSlotProvider {
         val config = SnowflakeProperties().apply {
             scope = "dummy"
             zk.server = server.ifNullOrBlank(TEST_ZK_SERVER)!!
-            zk.sessionTimeoutMs = timeoutMs
+            zk.sessionTimeout = slotTimeout
+            zk.connectTimeout = Duration.ofSeconds(2)
         }
         val networkConfig = NetworkConfig(null)
-        val zkp = ZookeeperSlotProvider("infra-test-project", true, networkConfig, config)
-        return zkp
+        return ZookeeperSlotProvider("infra-test-project", true, networkConfig, config)
     }
 }

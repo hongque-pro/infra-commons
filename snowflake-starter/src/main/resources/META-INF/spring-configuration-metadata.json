@@ -50,11 +50,18 @@
       "description": "zookeeper server ip address"
     },
     {
-      "name":"infra.snowflake.zk.sessionTimeoutMs",
-      "type": "java.lang.Integer",
+      "name":"infra.snowflake.zk.sessionTimeout",
+      "type": "java.time.Duration",
       "sourceType": "com.labijie.infra.commons.snowflake.configuration.ZookeeperConfig",
       "description": "zookeeper slot time out",
-      "defaultValue": 3600000
+      "defaultValue": "1h"
+    },
+    {
+      "name":"infra.snowflake.zk.connectTimeout",
+      "type": "java.time.Duration",
+      "sourceType": "com.labijie.infra.commons.snowflake.configuration.ZookeeperConfig",
+      "description": "zookeeper client connect timeout",
+      "defaultValue": "15s"
     },
 
     {

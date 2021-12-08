@@ -2,7 +2,6 @@
 build/
 gradle/
 gradlew*
-settings.gradle
 target/
 bin/
 out/
