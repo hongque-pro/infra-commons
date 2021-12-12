@@ -5,7 +5,7 @@ plugins {
 
 allprojects {
     group = "com.labijie.infra"
-    version = "2.2.0"
+    version = "2.2.1"
 
     this.apply(plugin = "com.labijie.infra")
 
