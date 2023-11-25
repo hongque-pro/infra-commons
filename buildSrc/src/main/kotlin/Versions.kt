@@ -5,9 +5,10 @@
  * @Description:
  */
 object Versions {
-    var kotlin = "1.6.0"
-    var infraBom = "2.6.3"
-    var infraOrm = "1.0.1"
-    var ksp = "1.6.0-1.0.1"
-    var infraPlugin = "1.0.7"
+    val projectVersion="3.0.0"
+    val kotlin = "1.9.21"
+    val infraBom = "3.2.0"
+    val infraOrm = "2.0.0"
+    val infraPlugin = "2.0.2"
+    val springbootVersion="3.2.0"
 }

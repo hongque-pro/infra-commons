@@ -1,6 +1,5 @@
 package com.labijie.infra.utils
 
-import com.sun.xml.internal.fastinfoset.util.StringArray
 import java.util.*
 
 /**

@@ -1,0 +1,3 @@
+com.labijie.infra.spring.configuration.CommonsAutoConfiguration
+com.labijie.infra.spring.configuration.DistributionAutoConfiguration
+com.labijie.infra.spring.configuration.SnowflakeAutoConfiguration

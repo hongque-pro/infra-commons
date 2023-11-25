@@ -27,14 +27,9 @@ object SecondIntervalTimeoutTimer {
     @Volatile
     private var started: Boolean = false
 
-    private val threadGroup: ThreadGroup
-        get() {
-            val s = System.getSecurityManager()
-            return if (s != null) s.threadGroup else Thread.currentThread().threadGroup
-        }
 
-    private var timer = HashedWheelTimer(ThreadFactory { r ->
-        Thread(this.threadGroup, r,
+    private var timer = HashedWheelTimer({ r ->
+        Thread(r,
                 "Default-HashedWheelTimer-${this.count.incrementAndGet()}")
                 .apply {
                     if (this.isDaemon) {

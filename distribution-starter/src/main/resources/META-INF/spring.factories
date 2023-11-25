@@ -1,2 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.labijie.infra.distribution.configuration.DistributionAutoConfiguration

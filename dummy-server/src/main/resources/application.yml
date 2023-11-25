@@ -9,10 +9,3 @@ spring:
     password: test
   application:
     name: dummy
-    
-infra:
-  exposed:
-    generate-schema: true
-  snowflake:
-    provider: jdbc
-

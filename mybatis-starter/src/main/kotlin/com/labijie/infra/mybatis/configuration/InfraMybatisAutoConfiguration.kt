@@ -30,7 +30,7 @@ class InfraMybatisAutoConfiguration {
     @ConditionalOnMissingBean(PageInterceptor::class)
     fun pageInterceptor(config: MybatisPageHelperProperties, customizers: ObjectProvider<IPageHelperCustomizer>): PageInterceptor {
         val properties = Properties()
-        if(!config.helperDialect.isBlank()){
+        if(config.helperDialect.isNotBlank()){
             properties.setProperty("helperDialect", config.helperDialect)
         }
         properties.setProperty("autoRuntimeDialect", config.autoRuntimeDialect.toString())

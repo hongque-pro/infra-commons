@@ -1,6 +1,6 @@
 package com.labijie.infra.dummy.distribution
 
-import com.labijie.infra.spring.configuration.NetworkConfig
+import com.labijie.infra.CommonsProperties
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class DistributionController {
     @Autowired
-    lateinit var network: NetworkConfig
+    lateinit var props: CommonsProperties
 
     @GetMapping("/sync")
     fun sync(): String {
 
-        return "OK! (${network.getIPAddress()})"
+        return "OK! (${props.getIPAddress()})"
     }
 }
