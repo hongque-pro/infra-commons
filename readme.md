@@ -1,7 +1,7 @@
 # 基础组件包
 
 ![maven central version](https://img.shields.io/maven-central/v/com.labijie.infra/commons?style=flat-square)
-![workflow status](https://img.shields.io/github/workflow/status/hongque-pro/infra-commons/Gradle%20Build%20And%20Release?label=CI%20publish&style=flat-square)
+![workflow status](https://img.shields.io/github/actions/workflow/status/hongque-pro/infra-commons/build.yml?branch=main)
 ![license](https://img.shields.io/github/license/hongque-pro/infra-commons?style=flat-square)
 
 该包没有太多的功能，主要用于固定依赖版本：
