@@ -11,6 +11,7 @@ allprojects {
     infra {
         useDefault {
             includeSource = true
+            includeDocument = true
             infraBomVersion = Versions.infraBom
             kotlinVersion = Versions.kotlin
         }
