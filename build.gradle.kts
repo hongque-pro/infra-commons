@@ -15,7 +15,7 @@ allprojects {
             kotlinVersion = Versions.kotlin
         }
 
-        //useNexusPublish()
+        usePublishPlugin()
     }
 }
 
@@ -32,6 +32,7 @@ subprojects {
                         n
                     }
                 }
+                toGithubPackages("hongque-pro", "infra-commons")
             }
         }
     }
