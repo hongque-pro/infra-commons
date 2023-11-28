@@ -28,9 +28,7 @@ subprojects {
                     description = "infrastructure library"
                     githubUrl("hongque-pro", "infra-commons")
                     artifactId {
-                        val n = "commons-${it.name}"
-                        print("${it.name} --> $n")
-                        n
+                        "commons-${it.name}"
                     }
                 }
                 toGithubPackages("hongque-pro", "infra-commons")

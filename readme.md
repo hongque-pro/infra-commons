@@ -8,7 +8,7 @@
 
 ## 使用举例
 ```groovy
-    compile "com.labijie.infra:commons-snowflaker-starter:$infra_commons_version"
+    compile "com.labijie.infra:commons-springboot-starter:$infra_commons_version"
 ```
 
 
