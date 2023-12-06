@@ -1,9 +1,9 @@
 package com.labijie.infra.json
 
+import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
-import java.io.IOException
 import java.math.BigDecimal
 
 /**
@@ -18,7 +18,7 @@ object DecimalAsStringDeserializer : JsonDeserializer<BigDecimal>() {
             try {
                 return BigDecimal(rawValue)
             }catch (ex: NumberFormatException){
-                throw IOException("Cant read json value '$rawValue' as a BigDecimal.")
+                throw JsonParseException("Cant read json value '$rawValue' as a BigDecimal.")
             }
         }
         return null

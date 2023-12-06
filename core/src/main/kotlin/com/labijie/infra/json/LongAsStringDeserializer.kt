@@ -1,5 +1,6 @@
 package com.labijie.infra.json
 
+import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
@@ -20,7 +21,7 @@ object LongAsStringDeserializer : JsonDeserializer<Any>() {
             try {
                 return rawValue.toLong()
             }catch (ex: NumberFormatException){
-                throw IOException("Cant read json value '$rawValue' as a Long.")
+                throw JsonParseException("Cant read json value '$rawValue' as a Long.")
             }
         }
         return null
