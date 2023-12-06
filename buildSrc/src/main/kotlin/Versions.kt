@@ -11,4 +11,5 @@ object Versions {
     val infraOrm = "2.0.0"
     val infraPlugin = "2.0.2"
     val springbootVersion="3.2.0"
+    val apacheCommonsText = "1.11.0"
 }

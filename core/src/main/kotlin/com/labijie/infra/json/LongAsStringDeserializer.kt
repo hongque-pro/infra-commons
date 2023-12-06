@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer
  * @author Anders Xiao
  * @date 2018-09-17
  */
-class LongAsStringDeserializer : JsonDeserializer<Any>() {
+object LongAsStringDeserializer : JsonDeserializer<Any>() {
     override fun deserialize(p: JsonParser?, ctxt: DeserializationContext?): Any? {
         val rawValue = p?.text?.trim('"')
         if(rawValue != null){

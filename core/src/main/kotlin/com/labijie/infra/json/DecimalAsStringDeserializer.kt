@@ -11,7 +11,7 @@ import java.math.BigDecimal
  * @author Anders Xiao
  * @date 2018-08-13
  */
-class DecimalAsStringDeserializer : JsonDeserializer<BigDecimal>() {
+object DecimalAsStringDeserializer : JsonDeserializer<BigDecimal>() {
     override fun deserialize(p: JsonParser?, ctxt: DeserializationContext?): BigDecimal? {
         val rawValue = p?.text?.trim('"')
         if(rawValue != null){

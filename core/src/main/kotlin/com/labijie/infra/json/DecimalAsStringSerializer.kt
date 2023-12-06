@@ -10,12 +10,7 @@ import java.math.BigDecimal
  * @author Anders Xiao
  * @date 2018-08-13
  */
-class DecimalAsStringSerializer : JsonSerializer<BigDecimal>() {
-    companion object {
-        val matchZero = Regex("0+?$")
-        var matchDot = Regex("[.]$")
-    }
-
+object DecimalAsStringSerializer : JsonSerializer<BigDecimal>() {
     override fun serialize(value: BigDecimal?, gen: JsonGenerator?, serializers: SerializerProvider?) {
         val s = value?.stripTrailingZeros()?.toPlainString()
         gen?.writeString(s)

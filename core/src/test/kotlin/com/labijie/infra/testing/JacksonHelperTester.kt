@@ -5,6 +5,7 @@ import com.labijie.infra.json.JacksonHelper
 import org.junit.jupiter.api.Assertions
 import kotlin.test.Test
 import java.math.BigDecimal
+import java.util.Locale
 
 /**
  * Created with IntelliJ IDEA.
@@ -77,6 +78,21 @@ class JacksonHelperTester{
         Assertions.assertArrayEquals(set.values.toTypedArray(), data.values.toTypedArray())
     }
 
+
+    @Test
+    fun deserializeLocale(){
+        val local = Locale.SIMPLIFIED_CHINESE
+        val l1 = JacksonHelper.deserializeFromString("\"${local.toString()}\"", Locale::class)
+        val l2 = JacksonHelper.deserializeFromString("\"${local.toLanguageTag()}\"", Locale::class)
+
+        Assertions.assertEquals(local, l1)
+        Assertions.assertEquals(local, l2)
+
+        val s = JacksonHelper.serializeAsString(local)
+        val l3 = JacksonHelper.deserializeFromString(s, Locale::class)
+        Assertions.assertEquals(local, l3)
+    }
+
     @Test
     fun longToStringSerialize(){
         val str = JacksonHelper.serializeAsString(TestData(), true)
@@ -85,8 +101,11 @@ class JacksonHelperTester{
         Assertions.assertEquals(Long.MAX_VALUE, data.longValue)
     }
 
+
     data class TestData(var decimalValue:BigDecimal = BigDecimal("0.0000000009"),
                         var longValue:Long = Long.MAX_VALUE){
 
     }
+
+
 }

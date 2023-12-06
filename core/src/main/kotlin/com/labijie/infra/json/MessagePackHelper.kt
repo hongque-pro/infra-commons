@@ -26,16 +26,16 @@ object MessagePackHelper {
       .setSerializationInclusion(JsonInclude.Include.NON_NULL)
       .apply {
         val decimalModule = SimpleModule("Numeric")
-        decimalModule.addSerializer(BigDecimal::class.java, DecimalAsStringSerializer())
+        decimalModule.addSerializer(BigDecimal::class.java, DecimalAsStringSerializer)
 
           decimalModule.addSerializer(Long::class.java, ToStringSerializer.instance)
           @Suppress("UNCHECKED_CAST")
-          decimalModule.addDeserializer(Long::class.java as Class<in Any>, LongAsStringDeserializer())
+          decimalModule.addDeserializer(Long::class.java as Class<in Any>, LongAsStringDeserializer)
 
           //兼容 java
           decimalModule.addSerializer(Class.forName("java.lang.Long"), ToStringSerializer.instance)
           @Suppress("UNCHECKED_CAST")
-          decimalModule.addDeserializer(Class.forName("java.lang.Long") as Class<in Any>, LongAsStringDeserializer())
+          decimalModule.addDeserializer(Class.forName("java.lang.Long") as Class<in Any>, LongAsStringDeserializer)
 
         this.registerModule(decimalModule)
       }

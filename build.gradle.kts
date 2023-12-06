@@ -15,8 +15,6 @@ allprojects {
             infraBomVersion = Versions.infraBom
             kotlinVersion = Versions.kotlin
         }
-
-        usePublishPlugin()
     }
 }
 

@@ -12,6 +12,7 @@ import com.labijie.infra.utils.deserializeList
 import com.labijie.infra.utils.deserializeMap
 import com.labijie.infra.utils.deserializeSet
 import java.math.BigDecimal
+import java.util.*
 import kotlin.reflect.KClass
 
 
@@ -22,6 +23,14 @@ import kotlin.reflect.KClass
  */
 object JacksonHelper {
 
+    private fun createModule(): SimpleModule {
+        val infraModule = SimpleModule("InfraModule")
+        infraModule.addDeserializer(BigDecimal::class.java, DecimalAsStringDeserializer)
+        infraModule.addSerializer(BigDecimal::class.java, DecimalAsStringSerializer)
+        infraModule.addDeserializer(Locale::class.java, LocaleDeserializer)
+        return infraModule
+    }
+
 
     val defaultObjectMapper = ObjectMapper()
             .configure(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN, true)
@@ -29,12 +38,8 @@ object JacksonHelper {
             .configure(SerializationFeature.WRITE_ENUMS_USING_INDEX, true)
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
             .apply {
-                //configOverride(BigDecimal::class.java).format = JsonFormat.Value.forShape(JsonFormat.Shape.STRING)
-                val decimalModule = SimpleModule("CustomDecimalModule")
-                decimalModule.addDeserializer(BigDecimal::class.java, DecimalAsStringDeserializer())
-                decimalModule.addSerializer(BigDecimal::class.java, DecimalAsStringSerializer())
-
-                this.registerModule(decimalModule).registerKotlinModule()
+                val module = createModule()
+                this.registerModule(module).registerKotlinModule()
             }
 
     val webCompatibilityMapper: ObjectMapper = ObjectMapper()
@@ -42,22 +47,20 @@ object JacksonHelper {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(SerializationFeature.WRITE_ENUMS_USING_INDEX, true)
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+
             .apply {
                 //configOverride(BigDecimal::class.java).format = JsonFormat.Value.forShape(JsonFormat.Shape.STRING)
-                val numericModule = SimpleModule("NumericModule")
-                numericModule.addDeserializer(BigDecimal::class.java, DecimalAsStringDeserializer())
-                numericModule.addSerializer(BigDecimal::class.java, DecimalAsStringSerializer())
-
-                numericModule.addSerializer(Long::class.java, ToStringSerializer.instance)
+                val infraModule = createModule()
+                infraModule.addSerializer(Long::class.java, ToStringSerializer.instance)
                 @Suppress("UNCHECKED_CAST")
-                numericModule.addDeserializer(Long::class.java as Class<in Any>, LongAsStringDeserializer())
+                infraModule.addDeserializer(Long::class.java as Class<in Any>, LongAsStringDeserializer)
 
                 //兼容 java
-                numericModule.addSerializer(Class.forName("java.lang.Long"), ToStringSerializer.instance)
+                infraModule.addSerializer(Class.forName("java.lang.Long"), ToStringSerializer.instance)
                 @Suppress("UNCHECKED_CAST")
-                numericModule.addDeserializer(Class.forName("java.lang.Long") as Class<in Any>, LongAsStringDeserializer())
+                infraModule.addDeserializer(Class.forName("java.lang.Long") as Class<in Any>, LongAsStringDeserializer)
 
-                this.registerModule(numericModule).registerKotlinModule()
+                this.registerModule(infraModule).registerKotlinModule()
             }
 
     private fun getObjectMapper(compatibleWeb: Boolean): ObjectMapper {
