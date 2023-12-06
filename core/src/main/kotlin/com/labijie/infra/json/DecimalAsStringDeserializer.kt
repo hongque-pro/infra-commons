@@ -18,7 +18,7 @@ object DecimalAsStringDeserializer : JsonDeserializer<BigDecimal>() {
             try {
                 return BigDecimal(rawValue)
             }catch (ex: NumberFormatException){
-                throw JsonParseException("Cant read json value '$rawValue' as a BigDecimal.")
+                throw JsonParseException(p, "Cant read json value '$rawValue' as a BigDecimal.")
             }
         }
         return null

@@ -19,7 +19,7 @@ object LocaleDeserializer: JsonDeserializer<Locale>() {
             try {
                 return LocaleUtils.toLocale(rawValue)
             }catch (ex: IllegalArgumentException ){
-                throw JsonParseException("Unable to convert '${rawValue.ifNullOrBlank("<null>")}' for Locale type")
+                throw JsonParseException(p, "Unable to convert '${rawValue.ifNullOrBlank("<null>")}' for Locale type")
             }
         }
         return null

@@ -21,7 +21,7 @@ object LongAsStringDeserializer : JsonDeserializer<Any>() {
             try {
                 return rawValue.toLong()
             }catch (ex: NumberFormatException){
-                throw JsonParseException("Cant read json value '$rawValue' as a Long.")
+                throw JsonParseException(p, "Cant read json value '$rawValue' as a Long.")
             }
         }
         return null
