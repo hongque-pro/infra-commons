@@ -7,6 +7,7 @@ import com.labijie.infra.distribution.IDistributedLock
 import com.labijie.infra.distribution.impl.ZookeeperDistributedLock
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.AutoConfigureAfter
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -26,11 +27,6 @@ import org.springframework.core.env.Environment
 @EnableConfigurationProperties(DistributedProperties::class)
 class DistributionAutoConfiguration {
 
-    @Bean
-    fun distributedSynchronizedAspect(lock:IDistributedLock): DistributedSynchronizedAspect {
-        return DistributedSynchronizedAspect(lock)
-    }
-
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnProperty(prefix = "infra.distribution", name = ["provider"], havingValue = "zookeeper", matchIfMissing = false)
     protected class ZookeeperDistributionImplAutoConfiguration {
@@ -45,5 +41,12 @@ class DistributionAutoConfiguration {
         fun distributionRunner(lockConfig: IDistributedLock): CommandLineRunner {
             return ZookeeperDistributionRunner(lockConfig)
         }
+    }
+
+
+    @Bean
+    @ConditionalOnBean(IDistributedLock::class)
+    fun distributedSynchronizedAspect(lock:IDistributedLock): DistributedSynchronizedAspect {
+        return DistributedSynchronizedAspect(lock)
     }
 }

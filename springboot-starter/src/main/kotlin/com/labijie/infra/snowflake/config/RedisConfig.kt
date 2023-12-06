@@ -1,7 +1,6 @@
 package com.labijie.infra.snowflake.config
 
 import java.time.Duration
-import java.util.concurrent.TimeUnit
 
 /**
  * Created with IntelliJ IDEA.
@@ -9,6 +8,6 @@ import java.util.concurrent.TimeUnit
  * @date 2019-09-09
  */
 class RedisConfig(
-        var url:String = "redis://localhost:6379",
-        var sessionTimeout:Duration = Duration.ofHours(1)) {
-}
+    var url: String = "redis://localhost:6379",
+    var sessionTimeout: Duration = Duration.ofHours(1)
+)

@@ -19,11 +19,6 @@ import org.springframework.context.annotation.Configuration
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(CommonsProperties::class)
 class CommonsAutoConfiguration {
-
-    @ConditionalOnMissingBean(IIdGenerator::class)
-    @Bean
-    fun debugIdGenerator(): IIdGenerator = DebugIdGenerator()
-
     @ConfigurationProperties("infra.security.rfc6238")
     @Bean
     fun rfc6238TokenServiceProperties(): Rfc6238TokenServiceProperties {

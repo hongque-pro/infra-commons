@@ -122,6 +122,7 @@ class JdbcSlotProvider constructor(
         return slotGot
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun updateTimeExpired(t: Timeout?): SecondIntervalTimeoutTimer.TaskResult {
         if (this.stopped) {
             return SecondIntervalTimeoutTimer.TaskResult.Break

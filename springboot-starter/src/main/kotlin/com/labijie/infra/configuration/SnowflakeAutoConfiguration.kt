@@ -29,10 +29,11 @@ import org.springframework.transaction.support.TransactionTemplate
 @AutoConfigureAfter(Environment::class)
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(SnowflakeProperties::class)
+@ConditionalOnMissingBean(IIdGenerator::class)
 class SnowflakeAutoConfiguration {
 
     @ConditionalOnMissingBean(ISlotProvider::class)
-    @ConditionalOnProperty(prefix = "infra.snowflake", name = ["provider"], havingValue = "static", matchIfMissing = false)
+    @ConditionalOnProperty(prefix = "infra.snowflake", name = ["provider"], havingValue = "static", matchIfMissing = true)
     @Bean
     fun staticSlotProvider(snowflakeConfig: SnowflakeProperties): StaticSlotProvider {
         return StaticSlotProvider(snowflakeConfig.static.slot)
@@ -66,7 +67,7 @@ class SnowflakeAutoConfiguration {
     @ConditionalOnMissingBean(JdbcSlotProvider::class)
     class ExposedStartNotFoundConfiguration : InitializingBean {
         override fun afterPropertiesSet() {
-            throw BeanCreationException("jdbcSlotProvider", "Not found SpringTransactionManager bean in context, please put 'com.labijie.orm:exposed-starter' package in classpath.")
+            throw BeanCreationException("jdbcSlotProvider", "Not found SpringTransactionManager bean in context, please put 'com.labijie.orm:exposed-springboot-starter' package in classpath.")
         }
     }
 

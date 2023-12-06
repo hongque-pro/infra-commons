@@ -8,10 +8,10 @@ import org.springframework.core.env.Environment
  * @author Anders Xiao
  * @date 2018-09-19
  */
-fun Environment.getApplicationName(throwIfNotConfigured:Boolean = true):String {
+fun Environment.getApplicationName(throwIfNotConfigured:Boolean = false):String {
     val applicationName: String? = this.getProperty("spring.application.name")
     if(applicationName.isNullOrBlank() && throwIfNotConfigured) {
-        throw IllegalArgumentException("Spring application name must be configured.")
+        throw NullApplicationNameException()
     }
     return applicationName.ifNullOrBlank("NULL_APP_NAME")!!
 }

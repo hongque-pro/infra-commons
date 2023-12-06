@@ -17,17 +17,18 @@ import org.springframework.context.annotation.Configuration
 class SnowflakeProperties {
     var scope: String = "default"
     var startTimestamp: Long = 1480166465631L //2016-11-26 21:21:05
-    var provider: String = "zookeeper"
+    var provider: String = "static"
+
 
     @NestedConfigurationProperty
-    var zk: ZookeeperConfig = ZookeeperConfig()
+    val zk: ZookeeperConfig = ZookeeperConfig()
 
     @NestedConfigurationProperty
-    var static: StaticConfig = StaticConfig()
+    val redis: RedisConfig = RedisConfig()
 
     @NestedConfigurationProperty
-    var redis: RedisConfig = RedisConfig()
+    val jdbc: JdbcConfig = JdbcConfig()
 
     @NestedConfigurationProperty
-    var jdbc: JdbcConfig = JdbcConfig()
+    val static: StaticConfig = StaticConfig()
 }

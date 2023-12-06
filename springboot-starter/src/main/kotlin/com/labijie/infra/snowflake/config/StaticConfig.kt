@@ -5,6 +5,8 @@ package com.labijie.infra.snowflake.config
  * @author Anders Xiao
  * @date 2019-06-19
  */
+//class StaticConfig(var slot: Int = 1)
+
 class StaticConfig {
-    var slot:Int = 1
+    var slot: Int = 1
 }

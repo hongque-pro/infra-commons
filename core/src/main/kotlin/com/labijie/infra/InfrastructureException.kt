@@ -10,3 +10,5 @@ open class InfrastructureException(message: String? = null, cause: Throwable? = 
 
     constructor(message:String) : this(message, null, false, true)
 }
+
+class NullApplicationNameException() : InfrastructureException("Spring application name must be configured (spring.application.name).")

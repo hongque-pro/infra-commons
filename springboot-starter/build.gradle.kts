@@ -1,15 +1,3 @@
-import com.labijie.infra.gradle.Utils.configureFor
-import org.jetbrains.kotlin.gradle.plugin.KaptExtension
-
-plugins {
-    id("idea")
-    kotlin("kapt")
-}
-
-dependencies {
-    kapt("org.springframework.boot:spring-boot-configuration-processor:${Versions.springbootVersion}")
-}
-
 
 dependencies {
     api(project(":core"))

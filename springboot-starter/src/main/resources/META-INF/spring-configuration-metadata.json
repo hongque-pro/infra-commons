@@ -1,0 +1,169 @@
+{
+  "groups": [
+    {
+      "name": "infra",
+      "type": "com.labijie.infra.CommonsProperties",
+      "sourceType": "com.labijie.infra.CommonsProperties"
+    },
+    {
+      "name": "infra.distribution",
+      "type": "com.labijie.infra.distribution.DistributedProperties",
+      "sourceType": "com.labijie.infra.distribution.DistributedProperties"
+    },
+    {
+      "name": "infra.security.rfc6238",
+      "type": "com.labijie.infra.security.Rfc6238TokenServiceProperties",
+      "sourceType": "com.labijie.infra.configuration.CommonsAutoConfiguration",
+      "sourceMethod": "rfc6238TokenServiceProperties()"
+    },
+    {
+      "name": "infra.snowflake",
+      "type": "com.labijie.infra.snowflake.SnowflakeProperties",
+      "sourceType": "com.labijie.infra.snowflake.SnowflakeProperties"
+    },
+    {
+      "name": "infra.snowflake.static",
+      "type": "com.labijie.infra.snowflake.config.StaticConfig",
+      "sourceType": "com.labijie.infra.snowflake.SnowflakeProperties",
+      "sourceMethod": "getStatic()"
+    },
+    {
+      "name": "infra.snowflake.jdbc",
+      "type": "com.labijie.infra.snowflake.config.JdbcConfig",
+      "sourceType": "com.labijie.infra.snowflake.SnowflakeProperties",
+      "sourceMethod": "getJdbc()"
+    },
+    {
+      "name": "infra.snowflake.redis",
+      "type": "com.labijie.infra.snowflake.config.RedisConfig",
+      "sourceType": "com.labijie.infra.snowflake.SnowflakeProperties",
+      "sourceMethod": "getRedis()"
+    },
+    {
+      "name": "infra.snowflake.zk",
+      "type": "com.labijie.infra.snowflake.config.ZookeeperConfig",
+      "sourceType": "com.labijie.infra.snowflake.SnowflakeProperties",
+      "sourceMethod": "getZk()"
+    }
+  ],
+  "properties": [
+    {
+      "name": "infra.distribution.provider",
+      "type": "java.lang.String",
+      "sourceType": "com.labijie.infra.distribution.DistributedProperties",
+      "defaultValue": "none"
+    },
+    {
+      "name": "infra.distribution.zk-server",
+      "type": "java.lang.String",
+      "sourceType": "com.labijie.infra.distribution.DistributedProperties"
+    },
+    {
+      "name": "infra.security.rfc6238.security-token",
+      "type": "java.lang.String",
+      "sourceType": "com.labijie.infra.security.Rfc6238TokenServiceProperties"
+    },
+    {
+      "name": "infra.security.rfc6238.time-step",
+      "type": "java.time.Duration",
+      "sourceType": "com.labijie.infra.security.Rfc6238TokenServiceProperties"
+    },
+    {
+      "name": "infra.snowflake.static.slot",
+      "type": "java.lang.Integer",
+      "sourceType": "com.labijie.infra.snowflake.config.StaticConfig",
+      "defaultValue": 1
+    },
+    {
+      "name": "infra.snowflake.jdbc.instance-identity",
+      "type": "com.labijie.infra.snowflake.config.InstanceIdentity",
+      "sourceType": "com.labijie.infra.snowflake.config.JdbcConfig",
+      "default": "UUID"
+    },
+    {
+      "name": "infra.snowflake.jdbc.timeout",
+      "type": "java.time.Duration",
+      "sourceType": "com.labijie.infra.snowflake.config.JdbcConfig",
+      "defaultValue": "1h"
+    },
+    {
+      "name": "infra.snowflake.provider",
+      "type": "java.lang.String",
+      "sourceType": "com.labijie.infra.snowflake.SnowflakeProperties",
+      "defaultValue": "static"
+    },
+    {
+      "name": "infra.snowflake.redis.session-timeout",
+      "type": "java.time.Duration",
+      "sourceType": "com.labijie.infra.snowflake.config.RedisConfig",
+      "defaultValue": "1h"
+    },
+    {
+      "name": "infra.snowflake.redis.url",
+      "type": "java.lang.String",
+      "sourceType": "com.labijie.infra.snowflake.config.RedisConfig",
+      "defaultValue": "redis://localhost:6379"
+    },
+    {
+      "name": "infra.snowflake.scope",
+      "type": "java.lang.String",
+      "sourceType": "com.labijie.infra.snowflake.SnowflakeProperties",
+      "defaultValue": "default"
+    },
+    {
+      "name": "infra.snowflake.start-timestamp",
+      "type": "java.lang.Long",
+      "sourceType": "com.labijie.infra.snowflake.SnowflakeProperties",
+      "defaultValue": "3m"
+    },
+    {
+      "name": "infra.snowflake.zk.connect-timeout",
+      "type": "java.time.Duration",
+      "sourceType": "com.labijie.infra.snowflake.config.ZookeeperConfig",
+      "defaultValue": "15s"
+    },
+    {
+      "name": "infra.snowflake.zk.server",
+      "type": "java.lang.String",
+      "sourceType": "com.labijie.infra.snowflake.config.ZookeeperConfig",
+      "description": "support multi node, ex: 127.0.0.1:2181,127.0.0.2:2181,127.0.0.3:2181",
+      "defaultValue": "127.0.0.1:2181"
+    },
+    {
+      "name": "infra.snowflake.zk.session-timeout",
+      "type": "java.time.Duration",
+      "sourceType": "com.labijie.infra.snowflake.config.ZookeeperConfig",
+      "defaultValue": "1h"
+    }
+  ],
+  "hints": [
+    {
+      "name": "infra.distribution.provider",
+      "values": [
+        {
+          "value": "none"
+        },
+        {
+          "value": "zookeeper"
+        }
+      ]
+    },
+    {
+      "name": "infra.snowflake.provider",
+      "values": [
+        {
+          "value": "static"
+        },
+        {
+          "value": "redis"
+        },
+        {
+          "value": "jdbc"
+        },
+        {
+          "value": "zookeeper"
+        }
+      ]
+    }
+  ]
+}
