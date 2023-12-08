@@ -12,4 +12,5 @@ object Versions {
     val infraPlugin = "2.0.2"
     val springbootVersion="3.2.0"
     val apacheCommonsText = "1.11.0"
+    val bouncycastle = "1.77"
 }

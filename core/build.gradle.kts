@@ -11,7 +11,7 @@ dependencies {
     compileOnly("com.esotericsoftware:kryo")
     // https://mvnrepository.com/artifact/com.cronutils/cron-utils
     api("com.cronutils:cron-utils")
-
+    api("org.bouncycastle:bcpkix-jdk18on:${Versions.bouncycastle}")
     //api("commons-validator:commons-validator:1.7")
 
     api("org.msgpack:jackson-dataformat-msgpack"){
