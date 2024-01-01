@@ -14,9 +14,9 @@ dependencies {
 
     compileOnly("io.lettuce:lettuce-core")
 
-    compileOnly("com.labijie.orm:exposed-starter:${Versions.infraOrm}")
+    compileOnly("com.labijie.orm:exposed-springboot-starter:${Versions.infraOrm}")
 
-    testImplementation("com.labijie.orm:exposed-test-starter:${Versions.infraOrm}")
+    testImplementation("com.labijie.orm:exposed-springboot-test-starter:${Versions.infraOrm}")
 }
 
 
