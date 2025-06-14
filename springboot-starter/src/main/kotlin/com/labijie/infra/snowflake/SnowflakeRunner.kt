@@ -32,7 +32,7 @@ class SnowflakeRunner : CommandLineRunner, ApplicationContextAware, Ordered {
                 snowflakeIdGenerator.newId()
                 logger.info("SnowflakeIdGenerator id generation has been tested successfully !")
             } catch (ex: Throwable) {
-                this.logger.error("Error occurred when starting the ZookeeperSlotProvider.", ex)
+                this.logger.error("Error occurred when testing SnowflakeIdGenerator.", ex)
                 ex.throwIfNecessary()
                 exitProcess(-9999)
             }

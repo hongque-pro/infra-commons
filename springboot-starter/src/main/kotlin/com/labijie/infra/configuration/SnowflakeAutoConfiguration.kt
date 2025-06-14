@@ -1,5 +1,6 @@
 package com.labijie.infra.configuration
 
+import com.labijie.infra.CommonsProperties
 import com.labijie.infra.IIdGenerator
 import com.labijie.infra.orm.annotation.TableScan
 import com.labijie.infra.snowflake.*
@@ -12,12 +13,14 @@ import org.springframework.beans.factory.BeanCreationException
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.AutoConfigureAfter
+import org.springframework.boot.autoconfigure.AutoConfigureOrder
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.Ordered
 import org.springframework.core.env.Environment
 import org.springframework.transaction.support.TransactionTemplate
 
@@ -30,7 +33,7 @@ import org.springframework.transaction.support.TransactionTemplate
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(SnowflakeProperties::class)
 @ConditionalOnMissingBean(IIdGenerator::class)
-class SnowflakeAutoConfiguration {
+open class SnowflakeAutoConfiguration {
 
     @ConditionalOnMissingBean(ISlotProvider::class)
     @ConditionalOnProperty(prefix = "infra.snowflake", name = ["provider"], havingValue = "static", matchIfMissing = true)
@@ -42,7 +45,7 @@ class SnowflakeAutoConfiguration {
     @ConditionalOnMissingBean(ISlotProvider::class)
     @ConditionalOnProperty(prefix = "infra.snowflake", name = ["provider"], havingValue = "redis", matchIfMissing = false)
     @Bean
-    fun redisSlotProvider(commonsProperties: com.labijie.infra.CommonsProperties, environment: Environment, snowflakeConfig: SnowflakeProperties): RedisSlotProvider {
+    fun redisSlotProvider(commonsProperties: CommonsProperties, environment: Environment, snowflakeConfig: SnowflakeProperties): RedisSlotProvider {
         return RedisSlotProvider(environment, commonsProperties, snowflakeConfig)
     }
 
@@ -57,19 +60,11 @@ class SnowflakeAutoConfiguration {
         class SnowflakeTableScanConfiguration
 
         @Bean
-        fun jdbcSlotProvider(transactionTemplate: TransactionTemplate, commonsProperties: com.labijie.infra.CommonsProperties, environment: Environment, snowflakeProperties: SnowflakeProperties): JdbcSlotProvider {
+        fun jdbcSlotProvider(transactionTemplate: TransactionTemplate, commonsProperties: CommonsProperties, snowflakeProperties: SnowflakeProperties): JdbcSlotProvider {
             return JdbcSlotProvider(snowflakeProperties, commonsProperties, transactionTemplate)
         }
     }
 
-    @Configuration(proxyBeanMethods = false)
-    @ConditionalOnProperty(prefix = "infra.snowflake", name = ["provider"], havingValue = "jdbc", matchIfMissing = false)
-    @ConditionalOnMissingBean(JdbcSlotProvider::class)
-    class ExposedStartNotFoundConfiguration : InitializingBean {
-        override fun afterPropertiesSet() {
-            throw BeanCreationException("jdbcSlotProvider", "Not found SpringTransactionManager bean in context, please put 'com.labijie.orm:exposed-springboot-starter' package in classpath.")
-        }
-    }
 
     @ConditionalOnMissingBean(ISlotProvider::class)
     @ConditionalOnProperty(prefix = "infra.snowflake", name = ["provider"], havingValue = "zookeeper", matchIfMissing = false)
@@ -87,6 +82,16 @@ class SnowflakeAutoConfiguration {
 
 
 
+    @AutoConfigureAfter(SnowflakeAutoConfiguration::class)
+    @Configuration(proxyBeanMethods = false)
+    @ConditionalOnProperty(prefix = "infra.snowflake", name = ["provider"], havingValue = "jdbc", matchIfMissing = false)
+    @ConditionalOnMissingBean(ISlotProvider::class)
+    class JdbcSnowflakeCheckAutoConfiguration : InitializingBean {
+
+        override fun afterPropertiesSet() {
+            throw BeanCreationException("jdbcSlotProvider", "Infra-Orm package required for jdbc snowflake, please put 'com.labijie.orm:exposed-springboot-starter' package in classpath.")
+        }
+    }
 
 //    @Bean
 //    fun etcdSlotProvider(environment: Environment, snowflakeConfig: SnowflakeConfig): EtcdSlotProvider {

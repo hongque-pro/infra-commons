@@ -2,17 +2,18 @@ plugins {
     `kotlin-dsl`
 }
 
-fun getProxyMavenRepository(): String {
-    val proxy: String? = System.getenv("MAVEN_PROXY")?.ifBlank { null }
-    return proxy ?: "https://maven.aliyun.com/nexus/content/groups/public/"
+fun getProxyMavenRepository(): String? {
+    return System.getenv("MAVEN_PROXY")?.ifBlank { null }
 }
 
 repositories {
     mavenLocal()
     gradlePluginPortal()
-    maven {
-        this.setUrl(getProxyMavenRepository())
-        this.isAllowInsecureProtocol = true
+    getProxyMavenRepository()?.let {
+        maven {
+            this.setUrl(it)
+            this.isAllowInsecureProtocol = true
+        }
     }
     mavenCentral()
 }

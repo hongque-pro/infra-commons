@@ -1,4 +1,9 @@
 
+infra {
+    useInfraOrmGenerator(Versions.infraOrm)
+}
+
+
 dependencies {
     api(project(":core"))
     api("org.springframework.boot:spring-boot-starter")
@@ -17,6 +22,7 @@ dependencies {
     compileOnly("com.labijie.orm:exposed-springboot-starter:${Versions.infraOrm}")
 
     testImplementation("com.labijie.orm:exposed-springboot-test-starter:${Versions.infraOrm}")
+
 }
 
 

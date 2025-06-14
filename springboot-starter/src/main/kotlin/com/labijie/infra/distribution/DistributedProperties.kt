@@ -14,5 +14,7 @@ class DistributedProperties() {
     var provider: String = "none"
     var zkServer:String = "127.0.0.1:2181"
 
-    val DISTRIBUTED_PROVIDER_ZOOKEEPER = "zookeeper"
+    companion object {
+        const val DISTRIBUTED_PROVIDER_ZOOKEEPER = "zookeeper"
+    }
 }

@@ -4,9 +4,11 @@ import com.labijie.infra.aspect.DistributedSynchronizedAspect
 import com.labijie.infra.distribution.DistributedProperties
 import com.labijie.infra.distribution.impl.ZookeeperDistributionRunner
 import com.labijie.infra.distribution.IDistributedLock
+import com.labijie.infra.distribution.impl.NoneDistributionLock
 import com.labijie.infra.distribution.impl.ZookeeperDistributedLock
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.AutoConfigureAfter
+import org.springframework.boot.autoconfigure.AutoConfigureOrder
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -14,6 +16,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.EnableAspectJAutoProxy
+import org.springframework.core.Ordered
 import org.springframework.core.env.Environment
 
 /**
@@ -25,7 +28,8 @@ import org.springframework.core.env.Environment
 @AutoConfigureAfter(Environment::class)
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(DistributedProperties::class)
-class DistributionAutoConfiguration {
+@AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
+open class DistributionAutoConfiguration {
 
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnProperty(prefix = "infra.distribution", name = ["provider"], havingValue = "zookeeper", matchIfMissing = false)
@@ -43,9 +47,13 @@ class DistributionAutoConfiguration {
         }
     }
 
+    @Bean
+    @ConditionalOnMissingBean(IDistributedLock::class)
+    fun noneDistributedLock(): IDistributedLock {
+        return NoneDistributionLock()
+    }
 
     @Bean
-    @ConditionalOnBean(IDistributedLock::class)
     fun distributedSynchronizedAspect(lock:IDistributedLock): DistributedSynchronizedAspect {
         return DistributedSynchronizedAspect(lock)
     }

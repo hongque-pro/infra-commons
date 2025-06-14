@@ -1,6 +1,7 @@
 server:
   port: 8899
 
+
 spring:
   datasource:
     driver-class-name: org.h2.Driver
@@ -9,3 +10,17 @@ spring:
     password: test
   application:
     name: dummy
+
+infra:
+  exposed:
+    generate-schema:
+      enabled: true
+  snowflake:
+    provider: jdbc
+
+#logging:
+#  level:
+#    org.springframework.boot.autoconfigure: trace
+#    org:
+#      springframework:
+#        context: debug

@@ -16,7 +16,10 @@ allprojects {
             kotlinVersion = Versions.kotlin
         }
     }
+
+
 }
+
 
 subprojects {
     infra {

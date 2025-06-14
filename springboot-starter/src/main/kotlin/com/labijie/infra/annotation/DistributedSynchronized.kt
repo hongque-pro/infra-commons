@@ -9,6 +9,4 @@ import com.labijie.infra.distribution.LockScope
  */
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class DistributedSynchronized(val lockName:String = "", val scope: LockScope = LockScope.Instance) {
-
-}
+annotation class DistributedSynchronized(val lockName:String = "", val scope: LockScope = LockScope.Instance)

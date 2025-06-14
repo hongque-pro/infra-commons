@@ -6,6 +6,7 @@ import org.apache.curator.framework.state.ConnectionState
 import org.apache.curator.framework.state.ConnectionStateListener
 import org.springframework.boot.CommandLineRunner
 import java.util.concurrent.TimeUnit
+import kotlin.time.Duration
 
 /**
  * Created with IntelliJ IDEA.
@@ -53,7 +54,9 @@ class ZookeeperDistributionRunner(private val distributedLock: IDistributedLock)
 
                 do {
                     this.distributedLock.release(IDistributedLock.INSTANCE_LOCK_NAME)
-                    val locked = this.distributedLock.acquire(IDistributedLock.INSTANCE_LOCK_NAME, TimeUnit.SECONDS.toMillis(20))
+                    val locked = this.distributedLock.tryAcquire(IDistributedLock.INSTANCE_LOCK_NAME,
+                        java.time.Duration.ofMillis(20)
+                    )
                     if (locked) {
                         DistributionInstance.status = InstanceStatus.Master
                         this.acquiring = false

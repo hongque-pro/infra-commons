@@ -14,6 +14,8 @@ import org.apache.curator.framework.recipes.locks.InterProcessMutex
 import org.apache.curator.framework.state.ConnectionStateListener
 import org.apache.curator.retry.ExponentialBackoffRetry
 import org.springframework.core.env.Environment
+import java.lang.AutoCloseable
+import java.time.Duration
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 
@@ -24,7 +26,7 @@ import java.util.concurrent.TimeUnit
  * @date 2018-09-19
  */
 class ZookeeperDistributedLock(private val environment: Environment, private val config: DistributedProperties) :
-    IDistributedLock {
+    IDistributedLock, AutoCloseable {
 
     companion object {
         fun throwIfInvalidName(name: String) {
@@ -83,11 +85,11 @@ class ZookeeperDistributedLock(private val environment: Environment, private val
         model.lock.acquire()
     }
 
-    override fun acquire(name: String, timeoutMilliseconds: Long, scope: LockScope): Boolean {
+    override fun tryAcquire(name: String, waitTimeout: Duration, scope: LockScope): Boolean {
         throwIfInvalidName(name)
         val model = getLockModel(name, scope)
         try {
-            return model.lock.acquire(timeoutMilliseconds, TimeUnit.MILLISECONDS)
+            return model.lock.acquire(waitTimeout.toMillis(), TimeUnit.MILLISECONDS)
         } catch (ex: Throwable) {
             this.logger.error("acquire distributed lock from zookeeper fault.", ex)
             ex.throwIfNecessary()

@@ -1,6 +1,6 @@
 package com.labijie.infra.dummy.distribution
 
-import com.labijie.infra.CommonsProperties
+import com.labijie.infra.dummy.AopTester
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
@@ -11,13 +11,14 @@ import org.springframework.web.bind.annotation.RestController
  * @date 2018-09-26
  */
 @RestController
-class DistributionController {
+class TestController {
+
     @Autowired
-    lateinit var props: CommonsProperties
+    private lateinit var aopTester: AopTester
 
-    @GetMapping("/sync")
-    fun sync(): String {
+    @GetMapping("/test")
+    fun test() {
 
-        return "OK! (${props.getIPAddress()})"
+        aopTester.test()
     }
 }

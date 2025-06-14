@@ -44,6 +44,8 @@ class RedisSlotProvider(
 
         var maxSlotCount: Int = 1024
 
+        private val locker = Any()
+
         private const val LOCK_LUA_SCRIPT =
                 "if ((redis.call('setnx',KEYS[1],ARGV[1]) == 1) or (redis.call('get',KEYS[1]) == ARGV[1])) then " +
                         "redis.call('expire',KEYS[1],ARGV[2]) return 1 " +
@@ -102,27 +104,28 @@ class RedisSlotProvider(
     }
 
     @Throws(SnowflakeException::class)
-    @Synchronized
     override fun acquireSlot(throwIfNoneSlot: Boolean): Int? {
 
-        var result = AcquireResult.Failed
-        for (i in 1..maxSlotCount) {
-            result = tryAcquireSlot(i)
-            if (result == AcquireResult.Success) return i
-            if (result == AcquireResult.RedisError) {
-                break
+        return synchronized(locker) {
+            var result = AcquireResult.Failed
+            for (i in 1..maxSlotCount) {
+                result = tryAcquireSlot(i)
+                if (result == AcquireResult.Success) return@synchronized i
+                if (result == AcquireResult.RedisError) {
+                    break
+                }
             }
-        }
 
-        if (throwIfNoneSlot) {
-            when (result) {
-                AcquireResult.RedisError -> throw SnowflakeException("A redis error occurred when request snowflake slot.")
-                else -> throw SnowflakeException("There is no available slot for snowflake.")
+            if (throwIfNoneSlot) {
+                when (result) {
+                    AcquireResult.RedisError -> throw SnowflakeException("A redis error occurred when request snowflake slot.")
+                    else -> throw SnowflakeException("There is no available slot for snowflake.")
+                }
             }
-        }
 
-        hoodShutdown()
-        return null
+            hoodShutdown()
+            return@synchronized null
+        }
     }
 
     private fun hoodShutdown() {

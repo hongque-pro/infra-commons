@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Configuration
  * @author Anders Xiao
  * @date 2018-08-10
  */
-@Configuration(proxyBeanMethods = false)
 @ConfigurationProperties("infra.snowflake")
 class SnowflakeProperties {
     var scope: String = "default"
