@@ -1,3 +1,4 @@
 org.springframework.aot.hint.RuntimeHintsRegistrar=\
-com.labijie.infra.snowflake.jdbc.aot.OrmPojoRuntimeHintsRegistrar
+com.labijie.infra.snowflake.jdbc.aot.OrmPojoRuntimeHintsRegistrar,\
+com.labijie.infra.aot.DistributedSynchronizedHints
 

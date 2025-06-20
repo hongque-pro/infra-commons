@@ -8,10 +8,15 @@ dependencies {
     api(project(":core"))
     api("org.springframework.boot:spring-boot-starter")
     api("org.springframework.boot:spring-boot-starter-aop")
+    api("org.springframework.boot:spring-boot-starter-web")
 
-    compileOnly("org.apache.curator:curator-recipes") {
-        //excludegroup: 'org.apache.zookeeper', module: 'zookeeper'
+    compileOnly("io.etcd:jetcd-core:${Versions.jetcd}") {
+        exclude(group = "com.google.guava")
+        exclude(group = "org.slf4j")
     }
+
+    compileOnly("org.apache.curator:curator-recipes")
+
     compileOnly("org.apache.zookeeper:zookeeper"){
         exclude("slf4j-log4j12")
         exclude("log4j")

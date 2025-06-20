@@ -1,5 +1,6 @@
 package com.labijie.infra.configuration
 
+import EtcdSlotProvider
 import com.labijie.infra.CommonsProperties
 import com.labijie.infra.IIdGenerator
 import com.labijie.infra.orm.annotation.TableScan
@@ -33,26 +34,46 @@ import org.springframework.transaction.support.TransactionTemplate
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(SnowflakeProperties::class)
 @ConditionalOnMissingBean(IIdGenerator::class)
+@AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
 open class SnowflakeAutoConfiguration {
 
     @ConditionalOnMissingBean(ISlotProvider::class)
-    @ConditionalOnProperty(prefix = "infra.snowflake", name = ["provider"], havingValue = "static", matchIfMissing = true)
+    @ConditionalOnProperty(
+        prefix = "infra.snowflake",
+        name = ["provider"],
+        havingValue = "static",
+        matchIfMissing = true
+    )
     @Bean
     fun staticSlotProvider(snowflakeConfig: SnowflakeProperties): StaticSlotProvider {
         return StaticSlotProvider(snowflakeConfig.static.slot)
     }
 
     @ConditionalOnMissingBean(ISlotProvider::class)
-    @ConditionalOnProperty(prefix = "infra.snowflake", name = ["provider"], havingValue = "redis", matchIfMissing = false)
+    @ConditionalOnProperty(
+        prefix = "infra.snowflake",
+        name = ["provider"],
+        havingValue = "redis",
+        matchIfMissing = false
+    )
     @Bean
-    fun redisSlotProvider(commonsProperties: CommonsProperties, environment: Environment, snowflakeConfig: SnowflakeProperties): RedisSlotProvider {
+    fun redisSlotProvider(
+        commonsProperties: CommonsProperties,
+        environment: Environment,
+        snowflakeConfig: SnowflakeProperties
+    ): RedisSlotProvider {
         return RedisSlotProvider(environment, commonsProperties, snowflakeConfig)
     }
 
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnMissingBean(ISlotProvider::class)
-    @ConditionalOnClass(name=["com.labijie.infra.orm.configuration.InfraExposedAutoConfiguration"])
-    @ConditionalOnProperty(prefix = "infra.snowflake", name = ["provider"], havingValue = "jdbc", matchIfMissing = false)
+    @ConditionalOnClass(name = ["com.labijie.infra.orm.configuration.InfraExposedAutoConfiguration"])
+    @ConditionalOnProperty(
+        prefix = "infra.snowflake",
+        name = ["provider"],
+        havingValue = "jdbc",
+        matchIfMissing = false
+    )
     class JdbcSlotProviderAutoConfiguration {
 
         @Configuration(proxyBeanMethods = false)
@@ -60,16 +81,42 @@ open class SnowflakeAutoConfiguration {
         class SnowflakeTableScanConfiguration
 
         @Bean
-        fun jdbcSlotProvider(transactionTemplate: TransactionTemplate, commonsProperties: CommonsProperties, snowflakeProperties: SnowflakeProperties): JdbcSlotProvider {
+        fun jdbcSlotProvider(
+            transactionTemplate: TransactionTemplate,
+            commonsProperties: CommonsProperties,
+            snowflakeProperties: SnowflakeProperties
+        ): JdbcSlotProvider {
             return JdbcSlotProvider(snowflakeProperties, commonsProperties, transactionTemplate)
         }
     }
 
+    @ConditionalOnMissingBean(ISlotProvider::class)
+    @ConditionalOnClass(name = ["io.etcd.jetcd.Client"])
+    @ConditionalOnProperty(
+        prefix = "infra.snowflake",
+        name = ["provider"],
+        havingValue = "etcd",
+        matchIfMissing = false
+    )
+    @Bean
+    fun etcdSlotProvider(commonsProperties: CommonsProperties, snowflakeConfig: SnowflakeProperties): ISlotProvider {
+        return EtcdSlotProvider(commonsProperties, snowflakeConfig)
+    }
+
 
     @ConditionalOnMissingBean(ISlotProvider::class)
-    @ConditionalOnProperty(prefix = "infra.snowflake", name = ["provider"], havingValue = "zookeeper", matchIfMissing = false)
+    @ConditionalOnProperty(
+        prefix = "infra.snowflake",
+        name = ["provider"],
+        havingValue = "zookeeper",
+        matchIfMissing = false
+    )
     @Bean
-    fun zookeeperSlotProvider(commonsProperties: com.labijie.infra.CommonsProperties, environment: Environment, snowflakeConfig: SnowflakeProperties): ISlotProvider {
+    fun zookeeperSlotProvider(
+        commonsProperties: CommonsProperties,
+        environment: Environment,
+        snowflakeConfig: SnowflakeProperties
+    ): ISlotProvider {
         return ZookeeperSlotProvider(environment, commonsProperties, snowflakeConfig)
     }
 
@@ -81,15 +128,41 @@ open class SnowflakeAutoConfiguration {
     }
 
 
-
     @AutoConfigureAfter(SnowflakeAutoConfiguration::class)
     @Configuration(proxyBeanMethods = false)
-    @ConditionalOnProperty(prefix = "infra.snowflake", name = ["provider"], havingValue = "jdbc", matchIfMissing = false)
+    @ConditionalOnProperty(
+        prefix = "infra.snowflake",
+        name = ["provider"],
+        havingValue = "jdbc",
+        matchIfMissing = false
+    )
     @ConditionalOnMissingBean(ISlotProvider::class)
     class JdbcSnowflakeCheckAutoConfiguration : InitializingBean {
 
         override fun afterPropertiesSet() {
-            throw BeanCreationException("jdbcSlotProvider", "Infra-Orm package required for jdbc snowflake, please put 'com.labijie.orm:exposed-springboot-starter' package in classpath.")
+            throw BeanCreationException(
+                "jdbcSlotProvider",
+                "Infra-Orm package required for jdbc snowflake, please put 'com.labijie.orm:exposed-springboot-starter' package in classpath."
+            )
+        }
+    }
+
+    @AutoConfigureAfter(SnowflakeAutoConfiguration::class)
+    @Configuration(proxyBeanMethods = false)
+    @ConditionalOnProperty(
+        prefix = "infra.snowflake",
+        name = ["provider"],
+        havingValue = "etcd",
+        matchIfMissing = false
+    )
+    @ConditionalOnMissingBean(ISlotProvider::class)
+    class EtcdSnowflakeCheckAutoConfiguration : InitializingBean {
+
+        override fun afterPropertiesSet() {
+            throw BeanCreationException(
+                "etcdSlotProvider",
+                "Package jetcd-core required for etcd snowflake slot provider, please put 'io.etcd:jetcd-core' package in classpath."
+            )
         }
     }
 

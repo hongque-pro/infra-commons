@@ -161,6 +161,9 @@
           "value": "jdbc"
         },
         {
+          "value": "etcd"
+        },
+        {
           "value": "zookeeper"
         }
       ]

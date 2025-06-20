@@ -11,7 +11,7 @@ class SnowflakeKernel(nodeId: Long,
                       /**
                        * 起始的时间戳
                        */
-                      private val startTimestamp: Long = 1480166465631L) {
+                      private val startTimestamp: Long = SnowflakeProperties.DEFAULT_SNOWFLAKE_START) {
     private val machineId: Long
     private val dataCenterId: Long = 0
 

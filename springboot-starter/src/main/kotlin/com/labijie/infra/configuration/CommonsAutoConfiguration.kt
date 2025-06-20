@@ -1,17 +1,12 @@
 package com.labijie.infra.configuration
 
-import com.labijie.infra.IIdGenerator
 import com.labijie.infra.CommonsProperties
-import com.labijie.infra.aot.DistributedSynchronizedHints
-import com.labijie.infra.impl.DebugIdGenerator
 import com.labijie.infra.security.Rfc6238TokenService
 import com.labijie.infra.security.Rfc6238TokenServiceProperties
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.ImportRuntimeHints
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,7 +15,6 @@ import org.springframework.context.annotation.ImportRuntimeHints
  */
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(CommonsProperties::class)
-@ImportRuntimeHints(DistributedSynchronizedHints::class)
 class CommonsAutoConfiguration {
 
     @ConfigurationProperties("infra.security.rfc6238")

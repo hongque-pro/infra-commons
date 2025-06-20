@@ -15,4 +15,5 @@ object Versions {
     val buildTools = "0.10.6"
     val springBoot = "3.5.0"
     val nativeBuildVersion = "0.10.6"
+    val jetcd = "0.8.5"
 }

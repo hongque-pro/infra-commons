@@ -13,6 +13,8 @@ import com.labijie.infra.isDevelopment
 import com.labijie.infra.snowflake.ISlotProvider
 import com.labijie.infra.snowflake.SnowflakeException
 import com.labijie.infra.snowflake.SnowflakeProperties
+import com.labijie.infra.utils.logger
+import com.labijie.infra.utils.throwIfNecessary
 import com.labijie.infra.utils.toLocalDateTime
 import org.slf4j.LoggerFactory
 import org.springframework.core.env.Environment
@@ -148,6 +150,7 @@ class RedisSlotProvider(
                         dealLine = 0
                         currentSlot = -1
                         timeOut?.cancel()
+                        timeOut = null
                         log.info("Snowflake slot (redis) has been released, scope:${snowflakeConfig.scope}, slot: '$key'.")
                     }
                 }
@@ -162,7 +165,11 @@ class RedisSlotProvider(
 
         val connection = try {
             createClientAndConnection(this.redisConfig.url)
-        } catch (e: RedisConnectionException) {
+        } catch (_: RedisConnectionException) {
+            return AcquireResult.RedisError
+        }catch (e: Throwable) {
+            logger.error("Acquire slot failed (redis).", e)
+            e.throwIfNecessary()
             return AcquireResult.RedisError
         }
 
@@ -173,7 +180,7 @@ class RedisSlotProvider(
             val result = setSlot(slot, command)
             when (result) {
                 AcquireResult.Success -> {
-                    log.info("Snowflake slot (redis) registering was done, scope:${snowflakeConfig.scope}, slot: '${getSlotKey(slot)}'.")
+                    log.info("The lease of the snowflake redis slot was renewed, scope:${snowflakeConfig.scope}, slot: '${getSlotKey(slot)}'.")
                     startRefreshTask(slot)
                 }
                 else -> {
@@ -203,7 +210,8 @@ class RedisSlotProvider(
                         this.startRefreshTask(slot)
                     }
                 }
-                else -> {
+                AcquireResult.Success -> {
+
                 }
             }
         }
@@ -244,7 +252,7 @@ class RedisSlotProvider(
     private fun getValue() = "$applicationName:${this.commonsProperties.getIPAddress()}:$instanceStamp"
 
     private fun getSlotKey(i: Int): String {
-        return "_snow_${snowflakeConfig.scope}:slot_$i"
+        return "snowflake:${snowflakeConfig.fixedScope()}:slot:$i"
     }
 
 
