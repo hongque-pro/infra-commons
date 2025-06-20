@@ -1,0 +1,3 @@
+org.springframework.aot.hint.RuntimeHintsRegistrar=\
+com.labijie.infra.snowflake.jdbc.aot.OrmPojoRuntimeHintsRegistrar
+

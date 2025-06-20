@@ -1,17 +1,15 @@
 
+
 plugins {
-    id("org.springframework.boot") version "3.5.0"
+    id("org.springframework.boot") version Versions.springBoot
+    id("org.graalvm.buildtools.native") version Versions.nativeBuildVersion
 }
 
-
-infra {
-    useNativeBuild {
-        binaries {
-            named("main"){
-                sharedLibrary.set(false)
-                mainClass.set("com.labijie.infra.dummy.ApplicationKt")
-            }
-
+graalvmNative {
+    binaries {
+        named("main"){
+            sharedLibrary.set(false)
+            mainClass.set("com.labijie.infra.dummy.ApplicationKt")
         }
 
     }
