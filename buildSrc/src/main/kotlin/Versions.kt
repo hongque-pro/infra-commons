@@ -6,7 +6,7 @@
  */
 object Versions {
     val projectVersion="3.5.2"
-    val infraBom = "3.5.0"
+    val infraBom = "3.5.2"
     val infraOrm = "2.1.+"
     val infraPlugin = "2.1.+"
     val apacheCommonsText = "1.11.0"
