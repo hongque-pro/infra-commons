@@ -56,16 +56,22 @@
     {
       "name": "infra.distribution.zk-server",
       "type": "java.lang.String",
-      "sourceType": "com.labijie.infra.distribution.DistributedProperties"
+      "sourceType": "com.labijie.infra.distribution.DistributedProperties",
+      "defaultValue": "127.0.0.1:2181"
     },
     {
-      "name": "infra.security.rfc6238.security-token",
+      "name": "infra.security.rfc6238.key-base64",
       "type": "java.lang.String",
       "sourceType": "com.labijie.infra.security.Rfc6238TokenServiceProperties"
     },
     {
       "name": "infra.security.rfc6238.time-step",
       "type": "java.time.Duration",
+      "sourceType": "com.labijie.infra.security.Rfc6238TokenServiceProperties"
+    },
+    {
+      "name": "infra.security.rfc6238.algorithm",
+      "type": "com.labijie.infra.security.Rfc6238Algorithm",
       "sourceType": "com.labijie.infra.security.Rfc6238TokenServiceProperties"
     },
     {

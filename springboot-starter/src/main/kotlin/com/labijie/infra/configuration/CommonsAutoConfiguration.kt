@@ -1,8 +1,10 @@
 package com.labijie.infra.configuration
 
 import com.labijie.infra.CommonsProperties
+import com.labijie.infra.security.IRfc6238TokenService
 import com.labijie.infra.security.Rfc6238TokenService
 import com.labijie.infra.security.Rfc6238TokenServiceProperties
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -24,6 +26,7 @@ class CommonsAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(IRfc6238TokenService::class)
     fun rfc6238TokenService(): Rfc6238TokenService {
         return Rfc6238TokenService()
     }

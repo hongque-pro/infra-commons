@@ -2,11 +2,10 @@
 
 package com.labijie.infra.snowflake.jdbc.aot
 
+import com.labijie.infra.orm.aot.registerOrmPojoType
 import java.lang.ClassLoader
-import org.springframework.aot.hint.MemberCategory
 import org.springframework.aot.hint.RuntimeHints
 import org.springframework.aot.hint.RuntimeHintsRegistrar
-import org.springframework.aot.hint.TypeReference
 
 /**
  * SpringBoot runtime hint for orm tables
@@ -24,12 +23,6 @@ import org.springframework.aot.hint.TypeReference
 internal class OrmPojoRuntimeHintsRegistrar : RuntimeHintsRegistrar {
   override fun registerHints(hints: RuntimeHints, classLoader: ClassLoader?) {
     // Begin Table Pojo types hint register
-    hints.reflection().registerType(TypeReference.of("com.labijie.infra.snowflake.jdbc.pojo.SnowflakeSlot")) {
-      it.withMembers(
-      MemberCategory.PUBLIC_FIELDS,
-      MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-      MemberCategory.INVOKE_PUBLIC_METHODS,
-      )
-    }
+    hints.registerOrmPojoType("com.labijie.infra.snowflake.jdbc.pojo.SnowflakeSlot")
   }
 }

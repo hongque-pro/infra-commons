@@ -1,7 +1,7 @@
 
 
 plugins {
-    id("org.springframework.boot") version Versions.springBoot
+    id("org.springframework.boot") version Versions.infraBom
     id("org.graalvm.buildtools.native") version Versions.nativeBuildVersion
 }
 
