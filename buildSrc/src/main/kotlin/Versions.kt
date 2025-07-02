@@ -5,7 +5,7 @@
  * @Description:
  */
 object Versions {
-    val projectVersion="3.5.3"
+    val projectVersion="2.3.0"
     val infraBom = "3.5.3"
     val infraOrm = "2.1.+"
     val infraPlugin = "2.1.+"

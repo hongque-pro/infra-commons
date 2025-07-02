@@ -3,8 +3,13 @@
 ![maven central version](https://img.shields.io/maven-central/v/com.labijie.infra/commons?style=flat-square)
 ![workflow status](https://img.shields.io/github/actions/workflow/status/hongque-pro/infra-commons/build.yml?branch=main)
 ![license](https://img.shields.io/github/license/hongque-pro/infra-commons?style=flat-square)
+![Static Badge](https://img.shields.io/badge/GraalVM-supported-green?style=flat&logoColor=blue&labelColor=orange)
 
 该包没有太多的功能，主要用于固定依赖版本：
+
+- Rfc6238
+
+> 该包没有太多的功能，主要用于固定依赖版本
 
 ## 使用举例
 ```groovy
@@ -12,37 +17,25 @@
 ```
 
 
-## 2.1.x 服务器环境兼容性：
-zookeeper: 3.6.3 
-kafka: 2.8.0 (该版本移除了 ZK 依赖)
-
-> spring kafka 兼容性看这里： https://spring.io/projects/spring-kafka
-
 ## 开发环境兼容性：
 
-infra_version 2.1   
+Version: 2.3.x   
 
-|组件|版本|说明|
-|--------|--------|--------|
-|   kotlin    |      1.4.10    |           |
-|   jdk    |      1.8   |           |
-|   spring boot    |      2.4.5    |           |
-|  spring cloud    |      2020.0.2    |   通过 BOM 控制版本，因为 cloud 组件版本混乱，无法统一指定  |
-|   spring framework    |      5.3.6   |           |
-|   spring dpendency management    |      1.0.10.RELEASE    |           |
+| 组件                          | 版本             | 说明               |
+|-----------------------------|----------------|------------------|
+| kotlin                      | 2.2.0          |                  |
+| jdk                         | 21             |                  |
+| spring boot                 | 3.5.3          |                  |
 
 ---
 
-infra_version 2.2
+infra_version 2.2.x
 
-|组件|版本|说明|
-|--------|--------|--------|
-|   kotlin    |      1.6.0    |           |
-|   jdk    |      1.8   |           |
-|   spring boot    |      2.6.0    |           |
-|  spring cloud    |      --    |   已移除，不再作为依赖项  |
-|   spring framework    |      5.3.13   |           |
-|   spring dpendency management    |      --    |     已移除，使用 gradle 管理 bom      |
+| 组件           | 版本     |说明|
+|--------------|--------|--------|
+| kotlin       | 1.9.21 |           |
+| jdk          | 17     |           |
+| spring boot  | 3.2.0  |           |
 
 ---
 
