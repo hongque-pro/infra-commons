@@ -4,11 +4,13 @@ import com.labijie.infra.CommonsProperties
 import com.labijie.infra.security.IRfc6238TokenService
 import com.labijie.infra.security.Rfc6238TokenService
 import com.labijie.infra.security.Rfc6238TokenServiceProperties
+import org.springframework.boot.autoconfigure.AutoConfigureOrder
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.Ordered
 
 /**
  * Created with IntelliJ IDEA.
@@ -17,6 +19,7 @@ import org.springframework.context.annotation.Configuration
  */
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(CommonsProperties::class)
+@AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
 class CommonsAutoConfiguration {
 
     @ConfigurationProperties("infra.security.rfc6238")

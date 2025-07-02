@@ -9,14 +9,17 @@ import com.labijie.infra.snowflake.ISlotProvider
 import com.labijie.infra.snowflake.providers.JdbcSlotProvider
 import org.springframework.beans.factory.BeanCreationException
 import org.springframework.boot.autoconfigure.AutoConfigureAfter
+import org.springframework.boot.autoconfigure.AutoConfigureOrder
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.Ordered
 
 
 @AutoConfigureAfter(SnowflakeAutoConfiguration::class)
 @Configuration(proxyBeanMethods = false)
+@AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
 @ConditionalOnProperty(prefix = "infra.snowflake", name = ["provider"], havingValue = "jdbc", matchIfMissing = false)
 @ConditionalOnMissingBean(ISlotProvider::class)
 class JdbcSnowflakeCheckAutoConfiguration {
