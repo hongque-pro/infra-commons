@@ -9,19 +9,18 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 
-
 /**
  * Created with IntelliJ IDEA.
  * @author Anders Xiao
  * @date 2018-08-12
  */
-class SnowflakeIdGenerator(snowflakeConfig: SnowflakeProperties, slotProviderFactory: ISlotProviderFactory) : IIdGenerator {
+class SnowflakeIdGenerator(snowflakeConfig: SnowflakeProperties, slotProviderFactory: ISlotProviderFactory) :
+    IIdGenerator {
 
     private var slotId: Int = -1
-    private var kernel: SnowflakeKernel? = null
-    private val lazyLock: Any = Any()
     private val slotProvider: ISlotProvider = slotProviderFactory.createProvider(snowflakeConfig.provider)
     private val timestamp: Long
+    private var dataCenterId: Long = snowflakeConfig.dataCenterId.toLong()
 
     companion object {
         private val logger by lazy {
@@ -29,13 +28,34 @@ class SnowflakeIdGenerator(snowflakeConfig: SnowflakeProperties, slotProviderFac
         }
     }
 
+
+    private val kernel by lazy {
+        val bitsConfig = SnowflakeBitsConfig()
+        slotProvider.setMaxSlots(bitsConfig.maxMachineId.toInt() + 1)
+        this.slotId = slotProvider.acquireSlot(true) ?: throw SnowflakeException("Failed to acquire snowflake slot")
+        SnowflakeKernel(
+            this.slotId.toLong(),
+            dataCenterId = dataCenterId,
+            startTimestamp = timestamp,
+            bitsConfig = bitsConfig
+        )
+    }
+
     init {
         var start = snowflakeConfig.startTimestamp
-        if(start == DEFAULT_SNOWFLAKE_START) {
+        if (start == DEFAULT_SNOWFLAKE_START) {
             start = System.getenv("SNOW_FLAKE_START")?.toLongOrNull() ?: snowflakeConfig.startTimestamp
         }
+
+        System.getenv("SNOW_FLAKE_DATA_CENTER")?.toLongOrNull()?.let {
+            logger.info("Snowflake Data Center ID read from environment: $it")
+            dataCenterId = it
+        } ?: run {
+            logger.info("Snowflake Data Center ID: ${snowflakeConfig.dataCenterId}")
+        }
+
         timestamp = start
-        if(timestamp == DEFAULT_SNOWFLAKE_START) {
+        if (timestamp == DEFAULT_SNOWFLAKE_START) {
             val startDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(start), ZoneOffset.UTC)
             val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
             StringBuilder().appendLine("Snowflake seed is too old (start timestamp: ${startDateTime.format(formatter)})")
@@ -50,14 +70,6 @@ class SnowflakeIdGenerator(snowflakeConfig: SnowflakeProperties, slotProviderFac
     }
 
     override fun newId(): Long {
-        if (slotId == -1 || this.kernel == null) {
-            synchronized(this.lazyLock) {
-                if (slotId == -1) {
-                    this.slotId = slotProvider.acquireSlot(true)!!
-                    this.kernel = SnowflakeKernel(this.slotId.toLong(), timestamp)
-                }
-            }
-        }
-        return this.kernel!!.nextId()
+        return this.kernel.nextId()
     }
 }

@@ -14,6 +14,7 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import kotlin.io.path.Path
 
 /**
  * @author Anders Xiao
@@ -24,6 +25,7 @@ class SnowflakeProperties {
     var scope: String = DEFAULT_SNOWFLAKE_SCOPE
     var startTimestamp: Long = DEFAULT_SNOWFLAKE_START //2016-11-26 21:21:05
     var provider: String = "static"
+    var dataCenterId: Int = 0
 
 
     @NestedConfigurationProperty
@@ -42,12 +44,12 @@ class SnowflakeProperties {
     val etcd: EtcdConfig = EtcdConfig()
 
 
-    fun fixedScope(): String {
+    fun fixedScope(spliterator: String = ":"): String {
         var scopeValue = scope
         if(scopeValue == DEFAULT_SNOWFLAKE_SCOPE) {
             scopeValue = System.getenv("SNOW_FLAKE_SCOPE").ifNullOrBlank { scope }
         }
-        return scopeValue
+        return "dc${dataCenterId}${spliterator}${scopeValue}"
     }
 
     companion object {

@@ -9,4 +9,6 @@ package com.labijie.infra.snowflake
 interface ISlotProvider {
     @Throws(SnowflakeException::class)
     fun acquireSlot(throwIfNoneSlot: Boolean = true) : Int?
+
+    fun setMaxSlots(maxSlots: Int)
 }

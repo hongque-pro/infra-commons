@@ -7,6 +7,7 @@ import com.labijie.infra.orm.annotation.TableScan
 import com.labijie.infra.snowflake.*
 import com.labijie.infra.snowflake.jdbc.SnowflakeSlotTable
 import com.labijie.infra.snowflake.providers.JdbcSlotProvider
+import com.labijie.infra.snowflake.providers.KubernetesStatefulSlotProvider
 import com.labijie.infra.snowflake.providers.RedisSlotProvider
 import com.labijie.infra.snowflake.providers.StaticSlotProvider
 import com.labijie.infra.snowflake.providers.ZookeeperSlotProvider
@@ -63,6 +64,18 @@ open class SnowflakeAutoConfiguration {
         snowflakeConfig: SnowflakeProperties
     ): RedisSlotProvider {
         return RedisSlotProvider(environment, commonsProperties, snowflakeConfig)
+    }
+
+    @ConditionalOnMissingBean(ISlotProvider::class)
+    @ConditionalOnProperty(
+        prefix = "infra.snowflake",
+        name = ["provider"],
+        havingValue = "statefulPod",
+        matchIfMissing = false
+    )
+    @Bean
+    fun statefulPodSlotProvider(): KubernetesStatefulSlotProvider {
+        return KubernetesStatefulSlotProvider()
     }
 
     @Configuration(proxyBeanMethods = false)

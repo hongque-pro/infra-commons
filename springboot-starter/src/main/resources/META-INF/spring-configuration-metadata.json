@@ -123,6 +123,12 @@
       "defaultValue": "3m"
     },
     {
+      "name": "infra.snowflake.data-center-id",
+      "type": "java.lang.Integer",
+      "sourceType": "com.labijie.infra.snowflake.SnowflakeProperties",
+      "defaultValue": 0
+    },
+    {
       "name": "infra.snowflake.zk.connect-timeout",
       "type": "java.time.Duration",
       "sourceType": "com.labijie.infra.snowflake.config.ZookeeperConfig",
@@ -171,6 +177,9 @@
         },
         {
           "value": "zookeeper"
+        },
+        {
+          "value": "statefulPod"
         }
       ]
     }

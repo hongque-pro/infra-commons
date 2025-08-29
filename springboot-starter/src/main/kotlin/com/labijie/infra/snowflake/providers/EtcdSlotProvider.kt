@@ -1,6 +1,7 @@
 import com.labijie.infra.CommonsProperties
 import com.labijie.infra.snowflake.HostIdentifier
 import com.labijie.infra.snowflake.ISlotProvider
+import com.labijie.infra.snowflake.SnowflakeBitsConfig
 import com.labijie.infra.snowflake.SnowflakeException
 import com.labijie.infra.snowflake.SnowflakeProperties
 import io.etcd.jetcd.ByteSequence
@@ -23,6 +24,8 @@ class EtcdSlotProvider(
     private val config: SnowflakeProperties
 ) : ISlotProvider {
 
+    private var maxSlotCount = SnowflakeBitsConfig.DEFAULT_MACHINES_PER_CENTER
+
     private val client: Client by lazy {
         val endpoints = config.etcd.endpoints.split(",")
             .map { it.trim() }
@@ -35,7 +38,7 @@ class EtcdSlotProvider(
 
 
     private val scope by lazy {
-        val s = config.fixedScope()
+        val s = config.fixedScope("/")
 
         s.apply {
             if(s.isBlank()) {
@@ -117,6 +120,10 @@ class EtcdSlotProvider(
             throw SnowflakeException("There is no available slot for snowflake (etc slot provider) .")
         }
         return null
+    }
+
+    override fun setMaxSlots(maxSlots: Int) {
+        this.maxSlotCount = maxSlots
     }
 
     private fun startKeepAliveWithStreamObserver(leaseId: Long) {

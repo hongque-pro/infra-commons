@@ -11,6 +11,7 @@ import com.labijie.infra.CommonsProperties
 import com.labijie.infra.getApplicationName
 import com.labijie.infra.isDevelopment
 import com.labijie.infra.snowflake.ISlotProvider
+import com.labijie.infra.snowflake.SnowflakeBitsConfig
 import com.labijie.infra.snowflake.SnowflakeException
 import com.labijie.infra.snowflake.SnowflakeProperties
 import com.labijie.infra.utils.logger
@@ -21,7 +22,6 @@ import org.springframework.core.env.Environment
 import java.time.Duration
 import java.time.Instant
 import java.util.*
-import kotlin.system.exitProcess
 
 
 /**
@@ -49,10 +49,10 @@ class RedisSlotProvider(
         private val locker = Any()
 
         private const val LOCK_LUA_SCRIPT =
-                "if ((redis.call('setnx',KEYS[1],ARGV[1]) == 1) or (redis.call('get',KEYS[1]) == ARGV[1])) then " +
-                        "redis.call('expire',KEYS[1],ARGV[2]) return 1 " +
-                        "else return 0 " +
-                        "end"
+            "if ((redis.call('setnx',KEYS[1],ARGV[1]) == 1) or (redis.call('get',KEYS[1]) == ARGV[1])) then " +
+                    "redis.call('expire',KEYS[1],ARGV[2]) return 1 " +
+                    "else return 0 " +
+                    "end"
 
         private const val UNLOCK_LUA_SCRIPT = "if redis.call('get',KEYS[1]) == ARGV[1] then " +
                 "return redis.call('del',KEYS[1]) else return 0 end"
@@ -63,6 +63,7 @@ class RedisSlotProvider(
     private val redisConfig = snowflakeConfig.redis
 
     private val instanceStamp: String = UUID.randomUUID().toString()
+
     @Volatile
     private var hooked: Boolean = false
 
@@ -74,8 +75,15 @@ class RedisSlotProvider(
         private set
     private var timeOut: Timeout? = null
 
+    var maxSlotsCount = SnowflakeBitsConfig.DEFAULT_MACHINES_PER_CENTER
+
+    override fun setMaxSlots(maxSlots: Int) {
+        this.maxSlotsCount = maxSlots
+    }
+
+
     init {
-        if (redisConfig.sessionTimeout.seconds < 180) {
+        if (redisConfig.sessionTimeout.toSeconds() < 180) {
             throw SnowflakeException("Redis slot timeout must not be less than 3 minute, please check redis sessionTimeout config.")
         }
     }
@@ -97,8 +105,8 @@ class RedisSlotProvider(
             }
             val client = RedisClient.create()
             val connection = MasterReplica.connect(
-                    client, StringCodec(),
-                    redisUrls
+                client, StringCodec(),
+                redisUrls
             )
             connection.readFrom = ReadFrom.MASTER_PREFERRED
             connection
@@ -112,7 +120,10 @@ class RedisSlotProvider(
             var result = AcquireResult.Failed
             for (i in 1..maxSlotCount) {
                 result = tryAcquireSlot(i)
-                if (result == AcquireResult.Success) return@synchronized i
+                if (result == AcquireResult.Success) {
+                    startRefreshTask(i)
+                    return@synchronized i
+                }
                 if (result == AcquireResult.RedisError) {
                     break
                 }
@@ -145,7 +156,8 @@ class RedisSlotProvider(
                 val conn = createClientAndConnection(this.redisConfig.url)
                 conn.use {
                     val key = getSlotKey(currentSlot)
-                    val result = it.sync().eval<Long>(UNLOCK_LUA_SCRIPT, ScriptOutputType.INTEGER, arrayOf(key), getValue())
+                    val result =
+                        it.sync().eval<Long>(UNLOCK_LUA_SCRIPT, ScriptOutputType.INTEGER, arrayOf(key), getValue())
                     if (result == 1L) {
                         dealLine = 0
                         currentSlot = -1
@@ -167,7 +179,7 @@ class RedisSlotProvider(
             createClientAndConnection(this.redisConfig.url)
         } catch (_: RedisConnectionException) {
             return AcquireResult.RedisError
-        }catch (e: Throwable) {
+        } catch (e: Throwable) {
             logger.error("Acquire slot failed (redis).", e)
             e.throwIfNecessary()
             return AcquireResult.RedisError
@@ -176,17 +188,8 @@ class RedisSlotProvider(
         connection.use {
             connection.timeout = Duration.ofSeconds(10)
             val command = connection.sync()
-            AutoCloseable {  }
+            AutoCloseable { }
             val result = setSlot(slot, command)
-            when (result) {
-                AcquireResult.Success -> {
-                    log.info("The lease of the snowflake redis slot was renewed, scope:${snowflakeConfig.scope}, slot: '${getSlotKey(slot)}'.")
-                    startRefreshTask(slot)
-                }
-                else -> {
-                }
-            }
-
             return result
         }
     }
@@ -196,29 +199,25 @@ class RedisSlotProvider(
         val refreshDuration = redisConfig.sessionTimeout.dividedBy(3).toMillis()
         timeOut = SecondIntervalTimeoutTimer.newTimeout(refreshDuration) {
             val result = this.tryAcquireSlot(slot)
-            val outOfDeadLine = (System.currentTimeMillis() + refreshDuration) > dealLine
+            val isDeadlineExceeded = (System.currentTimeMillis() + refreshDuration) > dealLine
             when (result) {
-                AcquireResult.Failed -> {
-                    log.error("When redis slot provider refresh a slot, it found that the slot is occupied by another instance (normally this shouldn't happen !!)")
-                    exitProcess(-9999)
-                }
-                AcquireResult.RedisError -> {
-                    if (outOfDeadLine) {
-                        log.error("Snowflake slot $slot will be timeout and cant refresh to server, process forced exit !!")
-                        exitProcess(-9999)
-                    } else {
-                        this.startRefreshTask(slot)
+                AcquireResult.Failed, AcquireResult.RedisError -> {
+                    if (isDeadlineExceeded) {
+                        log.error("Snowflake slot $slot will be timeout and cant refresh to server, process forced exit (slot provider: redis) !!")
+                        System.exit(9999)
                     }
                 }
+
                 AcquireResult.Success -> {
 
                 }
             }
+            startRefreshTask(slot)
         }
     }
 
     private fun setSlot(i: Int, command: RedisCommands<String, String>): AcquireResult {
-        val timeout = redisConfig.sessionTimeout.seconds.toString()
+        val timeout = redisConfig.sessionTimeout.toSeconds().toString()
         val value = getValue()
         val key = getSlotKey(i)
         var retriedCount = 0
@@ -252,7 +251,7 @@ class RedisSlotProvider(
     private fun getValue() = "$applicationName:${this.commonsProperties.getIPAddress()}:$instanceStamp"
 
     private fun getSlotKey(i: Int): String {
-        return "snowflake:${snowflakeConfig.fixedScope()}:slot:$i"
+        return "snowflake:${snowflakeConfig.fixedScope(":")}:slot:$i"
     }
 
 

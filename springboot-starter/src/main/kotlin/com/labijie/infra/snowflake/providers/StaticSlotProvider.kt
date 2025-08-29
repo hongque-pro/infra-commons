@@ -11,4 +11,8 @@ class StaticSlotProvider(private val slotId:Int = 1) : ISlotProvider {
     override fun acquireSlot(throwIfNoneSlot: Boolean): Int? {
         return slotId
     }
+
+    override fun setMaxSlots(maxSlots: Int) {
+
+    }
 }
