@@ -1,7 +1,7 @@
 # 基础组件包
 
 ![maven central version](https://img.shields.io/maven-central/v/com.labijie.infra/commons-core?style=flat-square)
-![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/hongque-pro/infra-commons/build.yml)
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/hongque-pro/infra-commons/build.yml?branch=master)
 ![license](https://img.shields.io/github/license/hongque-pro/infra-commons?style=flat-square)
 ![Static Badge](https://img.shields.io/badge/GraalVM-supported-green?style=flat&logoColor=blue&labelColor=orange)
 
