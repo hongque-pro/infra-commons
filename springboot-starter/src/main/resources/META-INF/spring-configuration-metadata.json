@@ -179,7 +179,7 @@
           "value": "zookeeper"
         },
         {
-          "value": "statefulPod"
+          "value": "stateful-pod"
         }
       ]
     }

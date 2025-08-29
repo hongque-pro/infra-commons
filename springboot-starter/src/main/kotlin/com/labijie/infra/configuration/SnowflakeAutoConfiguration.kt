@@ -70,7 +70,7 @@ open class SnowflakeAutoConfiguration {
     @ConditionalOnProperty(
         prefix = "infra.snowflake",
         name = ["provider"],
-        havingValue = "statefulPod",
+        havingValue = "stateful-pod",
         matchIfMissing = false
     )
     @Bean
