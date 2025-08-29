@@ -14,15 +14,19 @@ data class SnowflakeIdParts(
     val machineId: Long,
     val sequence: Long
 ) {
-    fun timeGenerated(zoneId: ZoneId =  ZoneId.systemDefault()): LocalDateTime =
+    fun timeGenerated(zoneId: ZoneId = ZoneId.systemDefault()): LocalDateTime =
         LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), zoneId)
 }
 
 
-fun parseSnowflakeId(id: Long, startTimestamp: Long = SnowflakeProperties.DEFAULT_SNOWFLAKE_START): SnowflakeIdParts {
-    val sequence = id and ((1L shl SnowflakeKernel.SEQUENCE_BIT) - 1)
-    val machineId = (id shr SnowflakeKernel.MACHINE_LEFT) and ((1L shl SnowflakeKernel.MACHINE_BIT) - 1)
-    val dataCenterId = (id shr SnowflakeKernel.DATACENTER_LEFT) and ((1L shl SnowflakeKernel.DATACENTER_BIT) - 1)
-    val timestamp = (id shr SnowflakeKernel.TIMESTMP_LEFT) + startTimestamp
+fun parseSnowflakeId(
+    id: Long,
+    startTimestamp: Long = SnowflakeProperties.DEFAULT_SNOWFLAKE_START,
+    bitsConfig: SnowflakeBitsConfig = SnowflakeBitsConfig(),
+): SnowflakeIdParts {
+    val sequence = id and ((1L shl bitsConfig.sequenceBits) - 1)
+    val machineId = (id shr bitsConfig.machineShift) and ((1L shl bitsConfig.machineBits) - 1)
+    val dataCenterId = (id shr bitsConfig.datacenterShift) and ((1L shl bitsConfig.datacenterBits) - 1)
+    val timestamp = (id shr bitsConfig.timestampShift) + startTimestamp
     return SnowflakeIdParts(timestamp, dataCenterId, machineId, sequence)
 }
