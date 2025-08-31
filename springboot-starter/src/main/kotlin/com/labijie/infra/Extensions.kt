@@ -17,11 +17,14 @@ fun Environment.getApplicationName(throwIfNotConfigured:Boolean = false):String 
 }
 
 val Environment.isDevelopment
-    get() = this.activeProfiles.contains(Constants.LocalProfile) || this.activeProfiles.contains(Constants.DevelopmentProfile)
+    get() = this.activeProfiles.any { Constants.DevelopmentProfile.equals(it, ignoreCase = true) || "development".equals(it, ignoreCase = true) }
 
 val Environment.isProduction
-    get() = this.activeProfiles.contains(Constants.ProductionProfile)
+    get() = this.activeProfiles.any { Constants.ProductionProfile.equals(it, ignoreCase = true) || "production".equals(it, ignoreCase = true) }
 
 val Environment.isTest
-    get() = this.activeProfiles.contains(Constants.TestProfile)
+    get() = this.activeProfiles.any { Constants.TestProfile.equals(it, ignoreCase = true) }
+
+val Environment.isLocal
+    get() = this.activeProfiles.any { Constants.LocalProfile.equals(it, ignoreCase = true) }
 
