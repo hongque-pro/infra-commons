@@ -22,6 +22,6 @@ val Environment.isDevelopment
 val Environment.isProduction
     get() = this.activeProfiles.contains(Constants.ProductionProfile)
 
-val Environment.IsTest
+val Environment.isTest
     get() = this.activeProfiles.contains(Constants.TestProfile)
 
