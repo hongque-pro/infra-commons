@@ -59,6 +59,48 @@ class SnowflakeKernel(
     private fun currentTime(): Long = System.currentTimeMillis()
     private fun waitNextMill(last: Long): Long = max(currentTime(), last + 1)
 
+    fun computeMaxId(
+        utcEpochMilli: Long,
+    ): Long {
+        val bitsConfig = bitsConfig
+        val startTimestamp = startTimestamp
+        val dataCenterId = dataCenterId
+        val machineId = machineId
+
+        // 时间差
+        val timestampDiff = utcEpochMilli - startTimestamp
+        require(timestampDiff >= 0) { "futureTimestamp must be after startTimestamp" }
+
+        // 序列最大值
+        val maxSeq = bitsConfig.maxSequence
+
+        // 计算最大可能 ID
+        return (timestampDiff shl bitsConfig.timestampShift) or
+                (dataCenterId shl bitsConfig.datacenterShift) or
+                (machineId shl bitsConfig.machineShift) or
+                maxSeq
+    }
+
+    fun computeMinId(
+        utcEpochMilli: Long,
+    ): Long {
+        val bitsConfig = bitsConfig
+        val startTimestamp = startTimestamp
+        val dataCenterId = dataCenterId
+        val machineId = machineId
+
+        // 时间差
+        val timestampDiff = utcEpochMilli - startTimestamp
+        require(timestampDiff >= 0) { "futureTimestamp must be after startTimestamp" }
+
+
+        // 计算最大可能 ID
+        return (timestampDiff shl bitsConfig.timestampShift) or
+                (dataCenterId shl bitsConfig.datacenterShift) or
+                (machineId shl bitsConfig.machineShift) or
+                0
+    }
+
     fun nextId(): Long {
         while (true) {
             val last = lastTimestamp.get()

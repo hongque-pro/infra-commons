@@ -1,6 +1,6 @@
 package com.labijie.infra.snowflake
 
-import com.labijie.infra.IIdGenerator
+import com.labijie.infra.ITimeBasedIdGenerator
 import com.labijie.infra.snowflake.SnowflakeProperties.Companion.DEFAULT_SNOWFLAKE_START
 import org.slf4j.LoggerFactory
 import java.time.Instant
@@ -15,12 +15,13 @@ import java.time.format.DateTimeFormatter
  * @date 2018-08-12
  */
 class SnowflakeIdGenerator(snowflakeConfig: SnowflakeProperties, slotProviderFactory: ISlotProviderFactory) :
-    IIdGenerator {
+    ITimeBasedIdGenerator {
 
     private var slotId: Int = -1
     private val slotProvider: ISlotProvider = slotProviderFactory.createProvider(snowflakeConfig.provider)
     private val timestamp: Long
     private var dataCenterId: Long = snowflakeConfig.dataCenterId.toLong()
+    private val bitsConfig = SnowflakeBitsConfig()
 
     companion object {
         private val logger by lazy {
@@ -30,7 +31,6 @@ class SnowflakeIdGenerator(snowflakeConfig: SnowflakeProperties, slotProviderFac
 
 
     private val kernel by lazy {
-        val bitsConfig = SnowflakeBitsConfig()
         slotProvider.setMaxSlots(bitsConfig.maxMachineId.toInt() + 1)
         this.slotId = slotProvider.acquireSlot(true) ?: throw SnowflakeException("Failed to acquire snowflake slot")
         SnowflakeKernel(
@@ -71,5 +71,21 @@ class SnowflakeIdGenerator(snowflakeConfig: SnowflakeProperties, slotProviderFac
 
     override fun newId(): Long {
         return this.kernel.nextId()
+    }
+
+    override fun computeMaxId(utcEpochMilli: Long): Long {
+        return this.computeMinId(utcEpochMilli)
+    }
+
+    override fun computeMinId(utcEpochMilli: Long): Long {
+        return this.computeMinId(utcEpochMilli)
+    }
+
+    override fun computeEpochMilliFromId(id: Long): Long {
+        val parts = parseSnowflakeId(id,
+            startTimestamp = timestamp,
+            bitsConfig = bitsConfig)
+
+        return parts.timestamp
     }
 }
