@@ -13,7 +13,7 @@ fun Environment.getApplicationName(throwIfNotConfigured:Boolean = false):String 
     if(applicationName.isNullOrBlank() && throwIfNotConfigured) {
         throw NullApplicationNameException()
     }
-    return applicationName.ifNullOrBlank("NULL_APP_NAME")!!
+    return applicationName.ifNullOrBlank("NULL_APP_NAME")
 }
 
 val Environment.isDevelopment

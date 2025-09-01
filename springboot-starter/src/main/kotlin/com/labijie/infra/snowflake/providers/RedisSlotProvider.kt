@@ -14,7 +14,6 @@ import com.labijie.infra.snowflake.ISlotProvider
 import com.labijie.infra.snowflake.SnowflakeBitsConfig
 import com.labijie.infra.snowflake.SnowflakeException
 import com.labijie.infra.snowflake.SnowflakeProperties
-import com.labijie.infra.utils.logger
 import com.labijie.infra.utils.throwIfNecessary
 import com.labijie.infra.utils.toLocalDateTime
 import org.slf4j.LoggerFactory
@@ -42,7 +41,9 @@ class RedisSlotProvider(
 
 
     companion object {
-        private val log = LoggerFactory.getLogger(RedisSlotProvider::class.java)
+        private val logger by lazy {
+            LoggerFactory.getLogger(RedisSlotProvider::class.java)
+        }
 
         var maxSlotCount: Int = 1024
 
@@ -163,11 +164,11 @@ class RedisSlotProvider(
                         currentSlot = -1
                         timeOut?.cancel()
                         timeOut = null
-                        log.info("Snowflake slot (redis) has been released, scope:${snowflakeConfig.scope}, slot: '$key'.")
+                        logger.info("Snowflake slot (redis) has been released, scope:${snowflakeConfig.scope}, slot: '$key'.")
                     }
                 }
             } catch (e: RedisException) {
-                log.warn("Release snowflake slot fault (redis).", e)
+                logger.warn("Release snowflake slot fault (redis).", e)
             }
         }
     }
@@ -203,7 +204,7 @@ class RedisSlotProvider(
             when (result) {
                 AcquireResult.Failed, AcquireResult.RedisError -> {
                     if (isDeadlineExceeded) {
-                        log.error("Snowflake slot $slot will be timeout and cant refresh to server, process forced exit (slot provider: redis) !!")
+                        logger.error("Snowflake slot $slot will be timeout and cant refresh to server, process forced exit (slot provider: redis) !!")
                         System.exit(9999)
                     }
                 }
@@ -227,10 +228,10 @@ class RedisSlotProvider(
                 val r = command.eval<Long>(LOCK_LUA_SCRIPT, ScriptOutputType.INTEGER, arrayOf(key), value, timeout)
                 result = if (r == 1L) {
                     dealLine = System.currentTimeMillis() + redisConfig.sessionTimeout.toMillis()
-                    if (log.isDebugEnabled) {
+                    if (logger.isDebugEnabled) {
 
                         val date = Instant.ofEpochMilli(dealLine).toLocalDateTime()
-                        log.debug("Redis slot $i has been refreshed, next deadline (UTC): $date")
+                        logger.debug("Redis slot $i has been refreshed, next deadline (UTC): $date")
                     }
                     currentSlot = i
                     AcquireResult.Success
@@ -240,7 +241,7 @@ class RedisSlotProvider(
                 return result
             } catch (e: RedisException) {
                 result = AcquireResult.RedisError
-                log.warn("Request snowflake slot fault.", e)
+                logger.warn("Request snowflake slot fault.", e)
                 Thread.sleep(1000)
                 retriedCount++
             }

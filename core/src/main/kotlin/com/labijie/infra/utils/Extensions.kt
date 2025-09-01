@@ -1,8 +1,6 @@
 package com.labijie.infra.utils
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import java.io.ByteArrayOutputStream
 import java.io.PrintWriter
 import java.lang.reflect.InvocationTargetException
@@ -21,31 +19,33 @@ import kotlin.reflect.full.isSubclassOf
  * @date 2018-08-12
  */
 
-private const val CGLIB_CLASS_SEPARATOR: String = "$$"
+//private const val CGLIB_CLASS_SEPARATOR: String = "$$"
 
-val Any.logger: Logger
-    get() {
-        val clazz = this::class.java
-        if (clazz.name.contains(CGLIB_CLASS_SEPARATOR)) {
-            val superclass = clazz.superclass
-            if (superclass != null && superclass != Any::class.java) {
-                return LoggerFactory.getLogger(superclass)
-            }
-        }
-        return LoggerFactory.getLogger(this::class.java)
-    }
+//val Any.logger: Logger
+//    get() {
+//        val clazz = this::class.java
+//        if (clazz.name.contains(CGLIB_CLASS_SEPARATOR)) {
+//            val superclass = clazz.superclass
+//            if (superclass != null && superclass != Any::class.java) {
+//                return LoggerFactory.getLogger(superclass)
+//            }
+//        }
+//        return LoggerFactory.getLogger(this::class.java)
+//    }
 
-fun String?.ifNullOrBlank(default: String?): String? {
+fun String?.ifNullOrBlank(default: String): String {
     if (this.isNullOrBlank()) {
         return default
     }
-    return this;
+    return this
 }
 
 inline fun <C : R, R> C?.ifNullOrBlank(defaultValue: () -> R): R
         where R : CharSequence {
     return if (this == null || this.isBlank()) defaultValue() else this
 }
+
+
 
 private val DEFAULT_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
@@ -56,11 +56,11 @@ fun nowString(zoneOffset: ZoneOffset = ZoneOffset.UTC): String {
 
 fun Throwable.printStackToString(): String {
     var stack: String
-    ByteArrayOutputStream().use {
-        PrintWriter(it).use {
+    ByteArrayOutputStream().use { stream ->
+        PrintWriter(stream).use {
             this.printStackTrace(it)
         }
-        stack = it.toByteArray().toString(Charsets.UTF_8)
+        stack = stream.toByteArray().toString(Charsets.UTF_8)
     }
     return stack
 }
@@ -82,7 +82,7 @@ fun findIpAddress(netmask: String): String? {
     return null
 }
 
-fun Throwable.throwIfNecessary(): Unit {
+fun Throwable.throwIfNecessary() {
     if (this is VirtualMachineError) {
         throw this
     }

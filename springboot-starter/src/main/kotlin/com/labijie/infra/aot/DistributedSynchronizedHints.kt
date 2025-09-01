@@ -8,6 +8,7 @@ package com.labijie.infra.aot
 import com.labijie.infra.annotation.DistributedSynchronized
 import com.labijie.infra.snowflake.ISlotProvider
 import com.labijie.infra.snowflake.SnowflakeIdGenerator
+import com.labijie.infra.snowflake.SnowflakeKernel
 import com.labijie.infra.snowflake.providers.JdbcSlotProvider
 import com.labijie.infra.snowflake.providers.RedisSlotProvider
 import com.labijie.infra.snowflake.providers.StaticSlotProvider
@@ -35,6 +36,7 @@ class DistributedSynchronizedHints : RuntimeHintsRegistrar {
         hints.reflection().registerType(StaticSlotProvider::class.java)
 
         hints.reflection().registerType(SnowflakeIdGenerator::class.java)
+        hints.reflection().registerType(SnowflakeKernel::class.java)
         hints.reflection().registerType(TypeReference.of("io.etcd.jetcd.Client"))
     }
 }
