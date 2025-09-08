@@ -5,7 +5,6 @@ import com.labijie.infra.distribution.DistributionException
 import com.labijie.infra.distribution.IDistributedLock
 import com.labijie.infra.distribution.LockScope
 import com.labijie.infra.getApplicationName
-import com.labijie.infra.utils.logger
 import com.labijie.infra.utils.throwIfNecessary
 import org.apache.curator.framework.CuratorFramework
 import org.apache.curator.framework.CuratorFrameworkFactory
@@ -13,6 +12,7 @@ import org.apache.curator.framework.recipes.locks.InterProcessLock
 import org.apache.curator.framework.recipes.locks.InterProcessMutex
 import org.apache.curator.framework.state.ConnectionStateListener
 import org.apache.curator.retry.ExponentialBackoffRetry
+import org.slf4j.LoggerFactory
 import org.springframework.core.env.Environment
 import java.lang.AutoCloseable
 import java.time.Duration
@@ -33,6 +33,10 @@ class ZookeeperDistributedLock(private val environment: Environment, private val
             if (name.isBlank()) {
                 throw IllegalArgumentException("DistributedLock name must not be null or empty string.")
             }
+        }
+
+        private val logger by lazy {
+            LoggerFactory.getLogger("com.labijie.infra.distribution.impl.ZookeeperDistributedLock")
         }
     }
 
@@ -91,7 +95,7 @@ class ZookeeperDistributedLock(private val environment: Environment, private val
         try {
             return model.lock.acquire(waitTimeout.toMillis(), TimeUnit.MILLISECONDS)
         } catch (ex: Throwable) {
-            this.logger.error("acquire distributed lock from zookeeper fault.", ex)
+            logger.error("acquire distributed lock from zookeeper fault.", ex)
             ex.throwIfNecessary()
             return false
         }

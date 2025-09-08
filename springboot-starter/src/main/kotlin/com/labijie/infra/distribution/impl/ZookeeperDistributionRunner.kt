@@ -1,12 +1,11 @@
 package com.labijie.infra.distribution.impl
 
 import com.labijie.infra.distribution.IDistributedLock
-import com.labijie.infra.utils.logger
 import org.apache.curator.framework.state.ConnectionState
 import org.apache.curator.framework.state.ConnectionStateListener
+import org.slf4j.LoggerFactory
 import org.springframework.boot.CommandLineRunner
 import java.util.concurrent.TimeUnit
-import kotlin.time.Duration
 
 /**
  * Created with IntelliJ IDEA.
@@ -23,14 +22,20 @@ class ZookeeperDistributionRunner(private val distributedLock: IDistributedLock)
     @Volatile
     private var acquiring = false
 
+    companion object {
+        private val logger by lazy {
+            LoggerFactory.getLogger("com.labijie.infra.distribution.impl.ZookeeperDistributionRunner")
+        }
+    }
+
     private val listener: ConnectionStateListener = ConnectionStateListener { _, newState ->
         val connected = newState == ConnectionState.RECONNECTED || newState == ConnectionState.CONNECTED || newState == ConnectionState.READ_ONLY
         if (this.isConnected != connected) {
             this.isConnected = connected
             if (!this.isConnected) {
-                this.logger.warn("The connection to zookeeper for IDistributedLock has been disconnected.")
+                logger.warn("The connection to zookeeper for IDistributedLock has been disconnected.")
             } else {
-                this.logger.debug("The connection to zookeeper was reconnected.")
+                logger.debug("The connection to zookeeper was reconnected.")
                 this.run() //如果正在请求，该操作无效，如果获取到锁，该操作将尝试重新获取锁
             }
         }
@@ -60,7 +65,7 @@ class ZookeeperDistributionRunner(private val distributedLock: IDistributedLock)
                     if (locked) {
                         DistributionInstance.status = InstanceStatus.Master
                         this.acquiring = false
-                        this.logger.debug("Get instance lock, switch to master.")
+                        logger.debug("Get instance lock, switch to master.")
                         return@Thread
                     } else {
                         Thread.sleep(TimeUnit.SECONDS.toMillis(10))

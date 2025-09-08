@@ -1,7 +1,7 @@
 package com.labijie.infra.impl
 
 import com.labijie.infra.IIdGenerator
-import com.labijie.infra.utils.logger
+import org.slf4j.LoggerFactory
 import java.util.concurrent.atomic.AtomicLong
 
 /**
@@ -11,6 +11,10 @@ import java.util.concurrent.atomic.AtomicLong
  */
 class DebugIdGenerator : IIdGenerator {
     val seed = AtomicLong(System.currentTimeMillis())
+
+    private val logger by lazy {
+        LoggerFactory.getLogger("com.labijie.infra.impl.DebugIdGenerator")
+    }
 
     @Volatile
     private var logged = false

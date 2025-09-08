@@ -1,7 +1,7 @@
 package com.labijie.infra.distribution.impl
 
-import com.labijie.infra.utils.logger
 import com.labijie.infra.utils.throwIfNecessary
+import org.slf4j.LoggerFactory
 
 /**
  * Created with IntelliJ IDEA.
@@ -9,6 +9,10 @@ import com.labijie.infra.utils.throwIfNecessary
  * @date 2018-09-19
  */
 object DistributionInstance {
+
+    private val logger by lazy {
+        LoggerFactory.getLogger("com.labijie.infra.distribution.impl.DistributionInstance")
+    }
 
     private val listeners: MutableSet<()->Unit> = mutableSetOf()
 

@@ -1,8 +1,8 @@
 package com.labijie.infra.snowflake
 
 import com.labijie.infra.IIdGenerator
-import com.labijie.infra.utils.logger
 import com.labijie.infra.utils.throwIfNecessary
+import org.slf4j.LoggerFactory
 import org.springframework.boot.CommandLineRunner
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
@@ -15,6 +15,13 @@ import kotlin.system.exitProcess
  * @date 2018-08-12
  */
 class SnowflakeRunner : CommandLineRunner, ApplicationContextAware, Ordered {
+
+    companion object {
+        private val logger by lazy {
+            LoggerFactory.getLogger("com.labijie.infra.snowflake.SnowflakeRunner")
+        }
+    }
+
     override fun getOrder(): Int {
         return 0
     }
@@ -32,7 +39,7 @@ class SnowflakeRunner : CommandLineRunner, ApplicationContextAware, Ordered {
                 snowflakeIdGenerator.newId()
                 logger.info("SnowflakeIdGenerator id generation has been tested successfully !")
             } catch (ex: Throwable) {
-                this.logger.error("Error occurred when testing SnowflakeIdGenerator.", ex)
+                logger.error("Error occurred when testing SnowflakeIdGenerator.", ex)
                 ex.throwIfNecessary()
                 exitProcess(-9999)
             }
