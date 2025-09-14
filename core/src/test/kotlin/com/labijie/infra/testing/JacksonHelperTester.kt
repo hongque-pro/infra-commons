@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions
 import kotlin.test.Test
 import java.math.BigDecimal
 import java.util.Locale
+import kotlin.test.assertEquals
 
 /**
  * Created with IntelliJ IDEA.
@@ -99,7 +100,24 @@ class JacksonHelperTester{
         val data = JacksonHelper.deserializeFromString(str, TestData::class, true)
 
         Assertions.assertEquals(Long.MAX_VALUE, data.longValue)
+
+        val data2 = TestData()
+        val webStr = JacksonHelper.serializeAsString(TestData(), false)
+        val data2De = JacksonHelper.deserializeFromString(webStr, TestData::class, false)
+
+        assertEquals(data2, data2De)
+
+
+        val data3 = TestData()
+        val webStr3 = JacksonHelper.serializeAsString(TestData(), true)
+        val data3De = JacksonHelper.deserializeFromString(webStr3, TestData::class, false)
+
+        assertEquals(data3, data3De)
+
+
+        assertEquals(data3, data3De)
     }
+
 
 
     data class TestData(var decimalValue:BigDecimal = BigDecimal("0.0000000009"),

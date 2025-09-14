@@ -21,7 +21,7 @@ class ExtensionsTester {
 
     @Test
     fun log() {
-        this.logger.info("test")
+        println("test")
     }
 
 

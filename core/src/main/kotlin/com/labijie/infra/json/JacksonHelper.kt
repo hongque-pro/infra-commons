@@ -27,8 +27,18 @@ object JacksonHelper {
         val infraModule = SimpleModule("InfraModule")
         infraModule.addDeserializer(BigDecimal::class.java, DecimalAsStringDeserializer)
         infraModule.addSerializer(BigDecimal::class.java, DecimalAsStringSerializer)
+
         infraModule.addDeserializer(Locale::class.java, LocaleDeserializer)
+        @Suppress("UNCHECKED_CAST")
+        infraModule.addDeserializer(Long::class.java as Class<in Any>, LongAsStringDeserializer)
+        @Suppress("UNCHECKED_CAST")
+        infraModule.addDeserializer(Class.forName("java.lang.Long") as Class<in Any>, LongAsStringDeserializer)
         return infraModule
+    }
+
+    fun registerModule(module: Module) {
+        defaultObjectMapper.registerModule(module)
+        webCompatibilityMapper.registerModule(module)
     }
 
 
@@ -71,13 +81,6 @@ object JacksonHelper {
         return getObjectMapper(compatibleWeb).writeValueAsBytes(data)
     }
 
-    fun <T : Any> deserialize(bytes: ByteArray, clazz: KClass<T>, compatibleWeb: Boolean = false): T {
-        return getObjectMapper(compatibleWeb).readValue(bytes, clazz.java)
-    }
-
-    fun <T> deserialize(bytes: ByteArray, typeReference: TypeReference<out T>, compatibleWeb: Boolean = false): T {
-        return getObjectMapper(compatibleWeb).readValue(bytes, typeReference)
-    }
 
     fun serializeAsString(data: Any, compatibleWeb: Boolean = false): String {
         return getObjectMapper(compatibleWeb).writeValueAsString(data)
@@ -87,12 +90,20 @@ object JacksonHelper {
         return getObjectMapper(compatibleWeb).valueToTree(data)
     }
 
-    fun <T : Any> deserializeFromJsonNode(jsonNode: JsonNode, clazz: KClass<T>, compatibleWeb: Boolean = false): T {
-        return getObjectMapper(compatibleWeb).treeToValue(jsonNode, clazz.java)
+    fun <T : Any> deserialize(bytes: ByteArray, clazz: KClass<T>): T {
+        return defaultObjectMapper.readValue(bytes, clazz.java)
     }
 
-    fun <T : Any> deserializeFromString(json: String, clazz: KClass<T>, compatibleWeb: Boolean = false): T {
-        return getObjectMapper(compatibleWeb).readValue(json, clazz.java)
+    fun <T> deserialize(bytes: ByteArray, typeReference: TypeReference<out T>): T {
+        return defaultObjectMapper.readValue(bytes, typeReference)
+    }
+
+    fun <T : Any> deserializeFromJsonNode(jsonNode: JsonNode, clazz: KClass<T>): T {
+        return defaultObjectMapper.treeToValue(jsonNode, clazz.java)
+    }
+
+    fun <T : Any> deserializeFromString(json: String, clazz: KClass<T>): T {
+        return defaultObjectMapper.readValue(json, clazz.java)
     }
 
     fun <T : Any> deserializeFromString(json: String, typeReference: TypeReference<out T>): T {
@@ -100,20 +111,20 @@ object JacksonHelper {
     }
 
 
-    fun <T : Any> deserializeList(bytes: ByteArray, elementClass: KClass<T>, compatibleWeb: Boolean = false): List<T> {
-        return getObjectMapper(compatibleWeb).deserializeList(bytes, elementClass)
+    fun <T : Any> deserializeList(bytes: ByteArray, elementClass: KClass<T>): List<T> {
+        return defaultObjectMapper.deserializeList(bytes, elementClass)
     }
 
-    fun <T : Any> deserializeSet(bytes: ByteArray, elementClass: KClass<T>, compatibleWeb: Boolean = false): Set<T> {
-        return getObjectMapper(compatibleWeb).deserializeSet(bytes, elementClass)
+    fun <T : Any> deserializeSet(bytes: ByteArray, elementClass: KClass<T>): Set<T> {
+        return defaultObjectMapper.deserializeSet(bytes, elementClass)
     }
 
-    fun <T : Any> deserializeArray(bytes: ByteArray, elementClass: KClass<T>, compatibleWeb: Boolean = false): Array<T> {
-        return getObjectMapper(compatibleWeb).deserializeArray(bytes, elementClass)
+    fun <T : Any> deserializeArray(bytes: ByteArray, elementClass: KClass<T>): Array<T> {
+        return defaultObjectMapper.deserializeArray(bytes, elementClass)
     }
 
-    fun <TKey : Any, TValue : Any> deserializeMap(bytes: ByteArray, keyClass: KClass<TKey>, valueClass: KClass<TValue>, compatibleWeb: Boolean = false): Map<TKey, TValue> {
-        return getObjectMapper(compatibleWeb).deserializeMap(bytes, keyClass, valueClass)
+    fun <TKey : Any, TValue : Any> deserializeMap(bytes: ByteArray, keyClass: KClass<TKey>, valueClass: KClass<TValue>): Map<TKey, TValue> {
+        return defaultObjectMapper.deserializeMap(bytes, keyClass, valueClass)
     }
 
 }
