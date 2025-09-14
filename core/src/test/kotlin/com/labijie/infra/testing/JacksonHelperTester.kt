@@ -97,20 +97,20 @@ class JacksonHelperTester{
     @Test
     fun longToStringSerialize(){
         val str = JacksonHelper.serializeAsString(TestData(), true)
-        val data = JacksonHelper.deserializeFromString(str, TestData::class, true)
+        val data = JacksonHelper.deserializeFromString(str, TestData::class)
 
         Assertions.assertEquals(Long.MAX_VALUE, data.longValue)
 
         val data2 = TestData()
         val webStr = JacksonHelper.serializeAsString(TestData(), false)
-        val data2De = JacksonHelper.deserializeFromString(webStr, TestData::class, false)
+        val data2De = JacksonHelper.deserializeFromString(webStr, TestData::class)
 
         assertEquals(data2, data2De)
 
 
         val data3 = TestData()
         val webStr3 = JacksonHelper.serializeAsString(TestData(), true)
-        val data3De = JacksonHelper.deserializeFromString(webStr3, TestData::class, false)
+        val data3De = JacksonHelper.deserializeFromString(webStr3, TestData::class)
 
         assertEquals(data3, data3De)
 
